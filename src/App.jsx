@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <div className="stage">
@@ -10,8 +8,6 @@ function App() {
 
       <h2 className="stressQuestion">How stressed are you feeling today?</h2>   
     </div>
-      
-
       
 
   )
