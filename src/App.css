@@ -1,14 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
-
-.stage {
-  width: 100%;
-  max-width: 390px;
-  padding: 23px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  height: 844px;
-  background-color: #fff2e5;
-
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -16,6 +11,8 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   min-height: 100vh;
+  background-color: rgb(255, 242, 229);
+  width: 100%;
 }
 
 h1 {
@@ -23,9 +20,20 @@ h1 {
   text-align: left;
   font-family: "Fredoka", sans-serif;
   font-weight: 600;
-  color: #995f7d;
+  font-size: 4rem;
+  color: rgb(133, 86, 60);
+  margin-left: 1rem;
+  margin-top: 4rem;
 }
 
-.stressQuestion {
-  background-color: #e7b5d1;
+.StressQuestion {
+  background-color: rgb(181, 155, 127);
+  margin: 1rem;
+  border-radius: 0.5rem;
+  height: 8rem;
+  font-size: 1.5rem;
+}
+
+.Welcome {
+  padding-bottom: 14rem;
 }
