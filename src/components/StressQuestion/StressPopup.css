@@ -1,0 +1,22 @@
+.StressSection {
+    background-color: rgb(181, 155, 127);
+    margin: 1rem;
+    border-radius: 0.5rem;
+    height: 30vh;
+    font-size: 1.5rem;
+    color: black;
+    padding: 1rem;
+}
+
+.OptionButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    width: 60vw;
+    height: 5vh;
+    margin: 0 auto;
+    font-size: 3vh;
+    color: rgb(133, 86, 60);
+    background-color: rgb(255, 242, 229);
+}
