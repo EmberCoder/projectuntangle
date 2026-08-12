@@ -7,16 +7,19 @@ import StressQuestion from './components/StressQuestion/StressQuestion';
 function App() {
   const [scale, setScale] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(true);
   return (
     <div>
 
       <div className="HomepageContent">
         <h1 className="Welcome">Welcome back, Name!</h1>
 
-        { showPopup ? (
-          <StressPopup scale={scale} />
-        ) : (
-          <StressQuestion setScale={setScale} setShowPopup={setShowPopup} scale={scale} />
+        {showQuestion && (
+          showPopup ? (
+            <StressPopup scale={scale} setShowPopup={setShowPopup} setShowQuestion={setShowQuestion}/>
+          ) : (
+            <StressQuestion setScale={setScale} setShowPopup={setShowPopup} scale={scale} setShowQuestion={setShowQuestion} showQuestion={showQuestion} />
+          )
         )}
 
         

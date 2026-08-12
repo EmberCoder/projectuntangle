@@ -6,6 +6,7 @@
     font-size: 1.5rem;
     color: black;
     padding: 1rem;
+    position: relative;
 }
 
 .OptionButtons {
