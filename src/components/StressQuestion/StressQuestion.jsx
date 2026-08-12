@@ -1,6 +1,7 @@
+import ExitButton from '../ExitButton';
 import './StressQuestion.css';
 
-const StressQuestion = ({setScale, setShowPopup, scale}) => {
+const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQuestion}) => {
     const onOptionChange = (e) => {
         setScale(e.target.value);
     }
@@ -13,6 +14,7 @@ const StressQuestion = ({setScale, setShowPopup, scale}) => {
         <div className="viewport">
             <div className="QuestionText">
                 <h2>How stressed are you feeling today?</h2>
+                <ExitButton onClick={() => setShowQuestion(false)} />
 
                 <div className="scale">
                     <label htmlFor="scale-1">Not at all</label>
