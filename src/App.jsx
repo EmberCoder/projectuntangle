@@ -15,11 +15,20 @@ function App() {
         <h1 className="Welcome">Welcome back, Name!</h1>
 
         {showQuestion && (
-          showPopup ? (
-            <StressPopup scale={scale} setShowPopup={setShowPopup} setShowQuestion={setShowQuestion}/>
-          ) : (
-            <StressQuestion setScale={setScale} setShowPopup={setShowPopup} scale={scale} setShowQuestion={setShowQuestion} showQuestion={showQuestion} />
-          )
+          <StressQuestion
+            scale={scale}
+            setScale={setScale}
+            setShowPopup={setShowPopup}
+            setShowQuestion={setShowQuestion}
+          />
+        )}
+
+        {showPopup && (
+          <StressPopup 
+            scale={scale} 
+            setShowPopup={setShowPopup} 
+            setShowQuestion={setShowQuestion} 
+          />
         )}
 
         

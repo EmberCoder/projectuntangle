@@ -16,6 +16,7 @@ const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQue
         
         if (Number(scale) >= 3) {
             setShowPopup(true);
+            setShowQuestion(false);
         }
     }
     return (
