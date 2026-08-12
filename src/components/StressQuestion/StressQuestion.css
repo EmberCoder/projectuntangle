@@ -2,13 +2,14 @@
     background-color: rgb(181, 155, 127);
     margin: 1rem;
     border-radius: 0.5rem;
-    height: 10rem;
+    height: 25vh;
     font-size: 1.5rem;
     color: black;
     padding: 1rem;
     display: inline-block;
     margin: 0;
     position: relative;
+    width: 80%;
 }
 
 .scale {
@@ -57,4 +58,11 @@
     background: rgba(0,0,0,0);
     border-color: rgba(0,0,0,0);
     color: rgb(255, 242, 229);
+}
+
+.ErrorMessage {
+    color: red;
+    font-size: 1rem;
+    margin-top: 1rem;
+    text-align: center;
 }

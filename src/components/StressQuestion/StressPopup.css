@@ -1,12 +1,15 @@
 .StressSection {
+    height: 30vh;
     background-color: rgb(181, 155, 127);
     margin: 1rem;
     border-radius: 0.5rem;
-    height: 30vh;
     font-size: 1.5rem;
     color: black;
     padding: 1rem;
+    display: inline-block;
+    margin: 0;
     position: relative;
+    width: 80%;
 }
 
 .OptionButtons {
