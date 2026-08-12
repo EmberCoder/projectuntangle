@@ -1,11 +1,19 @@
+import { useState } from 'react';
 import ExitButton from '../ExitButton';
 import './StressQuestion.css';
 
 const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQuestion}) => {
+    const [errorMessage, setErrorMessage] = useState(false);
     const onOptionChange = (e) => {
         setScale(e.target.value);
+        setErrorMessage(false);
     }
     const handleSubmit = () => {
+        if (scale === '') {
+            setErrorMessage(true); 
+            return;
+        }
+        
         if (Number(scale) >= 3) {
             setShowPopup(true);
         }
@@ -30,10 +38,16 @@ const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQue
                 </div>
 
             <div className="submit">
-                <button class="SubmitButton" onClick={handleSubmit}>Submit</button>
+                <button className="SubmitButton" onClick={handleSubmit}>Submit</button>
             </div>
+            
+            <div className="ErrorMessage">
+                {errorMessage && (
+                    <p>Please select a stress level before submitting.</p>
+                )}
             </div>
         </div>
+    </div>
     );
 };
 
