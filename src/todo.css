@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
+.stage {
+  width: 100%;
+  max-width: 390px;
+  padding: 23px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  height: 844px;
+  background-color: #fff2e5;
+}
+
+body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.todoTitle {
+  line-height: 1.2;
+  text-align: left;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  color: #85563c;
+  margin-top: 25px;
+}
+
+.todoHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  background-color: #995f7d;
+  color: white;
+  border: none;
+}
+
+.todoHeader button {
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+.emptyState p {
+  font-family: "Fredoka", sans-serif;
+  font-size: 18px;
+  color: #3A3A32;
+  margin-bottom: 20px;
+}
+
+.emptyState button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 25px;
+  background-color: #e7b5d1;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.taskName {
+  font-weight: bold;
+  color: #85563c;
+}
+
+.taskDueDate,
+.taskDescription {
+  font-size: 0.8rem;
+  color: black;
+}
