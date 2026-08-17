@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: rgb(255, 242, 229);
+  width: 100%;
+  font-family: "Fredoka", sans-serif;
+}
+
+h1 {
+  line-height: 1.2;
+  text-align: left;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 4rem;
+  color: rgb(133, 86, 60);
+  margin-left: 1rem;
+  margin-top: 4rem;
+}
+
+.StressQuestion {
+  background-color: rgb(181, 155, 127);
+  margin: 1rem;
+  border-radius: 0.5rem;
+  height: 8rem;
+  font-size: 1.5rem;
+}
+
+.Welcome {
+  padding-bottom: 14rem;
+}
+
+/* --- Self Care Zone Page Layout --- */
+
+.SelfCarePage {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 6rem 1.5rem;
+  font-family: "Fredoka", sans-serif;
+}
+
+.SelfCareHeader {
+  font-size: 3rem;
+  color: rgb(133, 86, 60);
+  margin-left: 0;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.SelfCareSubheading {
+  color: rgb(133, 86, 60);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.ZipForm {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.ZipLabel {
+  font-weight: 600;
+  color: rgb(133, 86, 60);
+  white-space: nowrap;
+}
+
+.ZipInputWrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid rgb(181, 155, 127);
+}
+
+.ZipInput {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+  color: rgb(133, 86, 60);
+  background-color: transparent;
+}
+
+.ZipInput::placeholder {
+  color: rgba(133, 86, 60, 0.5);
+}
+
+.SearchButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgb(133, 86, 60);
+  display: flex;
+  align-items: center;
+}
+
+.ResultsSection {
+  margin-bottom: 2rem;
+}
+
+.EventCard {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgb(181, 155, 127);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.EventTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(133, 86, 60);
+  margin-bottom: 0.25rem;
+}
+
+.EventLocation {
+  font-size: 0.85rem;
+  color: rgb(181, 155, 127);
+  margin-bottom: 0.25rem;
+}
+
+.EventDate {
+  font-size: 0.85rem;
+  color: rgb(133, 86, 60);
+  font-weight: 500;
+}
+
+.EventImage {
+  width: 70px;
+  height: 55px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ResourceCard {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid rgb(181, 155, 127);
+  color: rgb(133, 86, 60);
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ResourceCard a {
+  color: rgb(133, 86, 60);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.HotlinesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.HotlineCard {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  border: 2px solid rgb(181, 155, 127);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.HotlineTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgb(133, 86, 60);
+  margin-bottom: 0.35rem;
+}
+
+.HotlineLink {
+  color: rgb(181, 155, 127);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
