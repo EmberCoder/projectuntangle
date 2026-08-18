@@ -1,9 +1,8 @@
 import { MagnifyingGlass } from 'phosphor-react';
 import { useState } from 'react';
-import { NavBar } from './components/NavBar/NavBar';
+import NavBar from './components/NavBar/NavBar';
 import './selfcareapp.css';
 
-// Make sure 'export default' is present right here:
 export default function SelfCare() {
   const [zipCode, setZipCode] = useState('');
   const [events, setEvents] = useState([]);

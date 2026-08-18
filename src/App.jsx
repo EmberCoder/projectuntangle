@@ -1,47 +1,17 @@
-import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import './App.css';
-import { NavBar } from './components/NavBar/NavBar';
-import SelfCare from './selfcare';
 import { useState } from 'react';
+import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import NavBar from './components/NavBar/NavBar';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
+import SelfCare from './selfcare';
 
 function App() {
   const [scale, setScale] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState(true);
+
   return (
-    <div>
-
-      <div className="HomepageContent">
-        <h1 className="Welcome">Welcome back, Name!</h1>
-
-        {showQuestion && (
-          <StressQuestion
-            scale={scale}
-            setScale={setScale}
-            setShowPopup={setShowPopup}
-            setShowQuestion={setShowQuestion}
-          />
-        )}
-
-        {showPopup && (
-          <StressPopup 
-            scale={scale} 
-            setShowPopup={setShowPopup} 
-            setShowQuestion={setShowQuestion} 
-          />
-        )}
-
-        
-
-        <NavBar />
-
-      </div>
-      
-    </div>
     <Router>
       <Routes>
         <Route 
@@ -50,7 +20,23 @@ function App() {
             <div>
               <div className="HomepageContent">
                 <h1 className="Welcome">Welcome back, Name!</h1>
-                <h2 className="StressQuestion">How stressed are you feeling today?</h2> 
+
+                {showQuestion && (
+                  <StressQuestion
+                    scale={scale}
+                    setScale={setScale}
+                    setShowPopup={setShowPopup}
+                    setShowQuestion={setShowQuestion}
+                  />
+                )}
+
+                {showPopup && (
+                  <StressPopup 
+                    scale={scale} 
+                    setShowPopup={setShowPopup} 
+                    setShowQuestion={setShowQuestion} 
+                  />
+                )}
 
                 <div style={{ margin: '1rem' }}>
                   <Link 
@@ -70,7 +56,7 @@ function App() {
                   </Link>
                 </div>
 
-                <NavBar/>
+                <NavBar />
               </div>
             </div>
           } 
