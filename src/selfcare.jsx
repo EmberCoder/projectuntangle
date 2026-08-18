@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import './selfcareapp.css';
 import { MagnifyingGlass } from 'phosphor-react';
-import NavBar from './components/NavBar/NavBar';
+import { useState } from 'react';
+import { NavBar } from './components/NavBar/NavBar';
+import './selfcareapp.css';
 
 // Make sure 'export default' is present right here:
 export default function SelfCare() {
