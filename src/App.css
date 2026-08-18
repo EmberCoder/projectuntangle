@@ -26,14 +26,7 @@ h1 {
   margin-top: 4rem;
 }
 
-.StressQuestion {
-  background-color: rgb(181, 155, 127);
-  margin: 1rem;
-  border-radius: 0.5rem;
-  height: 8rem;
-  font-size: 1.5rem;
-}
 
 .Welcome {
-  padding-bottom: 14rem;
+  padding-bottom: 20vh;
 }
