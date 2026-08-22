@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './todo.css';
+import NavBar from './components/NavBar/NavBar';
 
 function Todo() {
   const [tasks, setTasks] = useState([]);
@@ -9,12 +10,12 @@ function Todo() {
   const [showForm, setShowForm] = useState(true);
   const [editingTaskId, setEditingTaskId] = useState(null);
 
-  function addTask(taskText, dueDate, taskDesc) {
+  function addTask(taskText, taskDueDate, taskDescription) {
     const newTask = {
       id: Date.now(),
       text: taskText,
-      dueDate: dueDate,
-      description: taskDesc,
+      dueDate: taskDueDate,
+      description: taskDescription,
       completed: false
     };
 
@@ -43,19 +44,20 @@ function Todo() {
 
   function editTask(taskId) {
     const task = tasks.find((task) => task.id === taskId);
+
     setEditingTaskId(taskId);
     setTaskInput(task.text);
     setDueDate(task.dueDate);
     setTaskDesc(task.description);
   }
 
-  function updateTask(taskId, taskText, dueDate, taskDesc) {
+  function updateTask(taskId) {
     setTasks(
       tasks.map((task) =>
         task.id === taskId
           ? {
               ...task,
-              text: taskText,
+              text: taskInput,
               dueDate: dueDate,
               description: taskDesc
             }
@@ -64,6 +66,9 @@ function Todo() {
     );
 
     setEditingTaskId(null);
+    setTaskInput('');
+    setDueDate('');
+    setTaskDesc('');
   }
 
   return (
@@ -78,45 +83,60 @@ function Todo() {
 
       {tasks.length === 0 ? (
         <div className="emptyState">
+
           <p>You don't have any tasks yet!</p>
 
           <input
             type="text"
             placeholder="Enter a task"
             value={taskInput}
-            onChange={(event) => setTaskInput(event.target.value)}
+            onChange={(event) =>
+              setTaskInput(event.target.value)
+            }
           />
 
           <input
             type="date"
             value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
+            onChange={(event) =>
+              setDueDate(event.target.value)
+            }
           />
 
           <input
             type="text"
             placeholder="Enter task details"
             value={taskDesc}
-            onChange={(event) => setTaskDesc(event.target.value)}
+            onChange={(event) =>
+              setTaskDesc(event.target.value)
+            }
           />
 
           <button
             onClick={() => {
               if (taskInput.trim() !== '') {
-                addTask(taskInput, dueDate, taskDesc);
+                addTask(
+                  taskInput,
+                  dueDate,
+                  taskDesc
+                );
               }
             }}
           >
             Add a task
           </button>
+
         </div>
       ) : (
+
         <div className="taskList">
 
           {tasks.map((task) => (
+
             <div className="task" key={task.id}>
 
               {editingTaskId === task.id ? (
+
                 <div className="editForm">
 
                   <input
@@ -146,16 +166,7 @@ function Todo() {
                   <button
                     onClick={() => {
                       if (taskInput.trim() !== '') {
-                        updateTask(
-                          task.id,
-                          taskInput,
-                          dueDate,
-                          taskDesc
-                        );
-
-                        setTaskInput('');
-                        setDueDate('');
-                        setTaskDesc('');
+                        updateTask(task.id);
                       }
                     }}
                   >
@@ -174,58 +185,86 @@ function Todo() {
                   </button>
 
                 </div>
-              ) : (
-                <>
-                  <input
-                    type="checkbox"
-                    checked={task.completed}
-                    onChange={() => toggleTask(task.id)}
-                  />
 
-                  <div
-                    style={{
-                      textDecoration: task.completed
-                        ? 'line-through'
-                        : 'none'
-                    }}
-                  >
-                    <div className="taskName">
-                      {task.text}
+              ) : (
+
+                <>
+                  <div className="taskCard">
+
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() =>
+                        toggleTask(task.id)
+                      }
+                    />
+
+                    <div
+                      style={{
+                        textDecoration: task.completed
+                          ? 'line-through'
+                          : 'none'
+                      }}
+                    >
+
+                      <div className="taskName">
+                        {task.text}
+                      </div>
+
+                      {task.dueDate && (
+                        <div className="taskDueDate">
+                          Due: {task.dueDate}
+                        </div>
+                      )}
+
+                      {task.description && (
+                        <div className="taskDescription">
+                          {task.description}
+                        </div>
+                      )}
+
                     </div>
 
-                    {task.dueDate && (
-                      <div className="taskDueDate">
-                        Due: {task.dueDate}
-                      </div>
-                    )}
-
-                    {task.description && (
-                      <div className="taskDescription">
-                        {task.description}
-                      </div>
-                    )}
                   </div>
 
-                  <button onClick={() => editTask(task.id)}>
-                    Edit
-                  </button>
+                  <div className="taskActions">
 
-                  <button onClick={() => deleteTask(task.id)}>
-                    Delete
-                  </button>
+                    <button
+                      onClick={() =>
+                        editTask(task.id)
+                      }
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        deleteTask(task.id)
+                      }
+                    >
+                      Delete
+                    </button>
+
+                  </div>
                 </>
+
               )}
 
             </div>
+
           ))}
 
           {!showForm && editingTaskId === null && (
-            <button onClick={() => setShowForm(true)}>
+            <button
+              className="addAnotherButton"
+              onClick={() => setShowForm(true)}
+            >
               Add another task
             </button>
           )}
 
           {showForm && editingTaskId === null && (
+
             <div className="emptyState">
 
               <input
@@ -269,10 +308,17 @@ function Todo() {
               </button>
 
             </div>
-          )}
 
+          )}
+          <div className="aiActions">
+            <button>Create Schedule</button>
+            <button>Break Down Tasks</button>
+          </div>
         </div>
+
       )}
+
+      <NavBar />
 
     </div>
   );

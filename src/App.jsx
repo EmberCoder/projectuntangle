@@ -5,6 +5,7 @@ import NavBar from './components/NavBar/NavBar';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
 import SelfCare from './selfcare';
+import Todo from './todo';
 
 function App() {
   const [scale, setScale] = useState("");
@@ -61,6 +62,7 @@ function App() {
             </div>
           } 
         />
+         <Route path="/todo" element={<Todo />} />
         <Route path="/selfcare" element={<SelfCare />} />
       </Routes>
     </Router>
