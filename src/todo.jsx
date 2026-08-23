@@ -13,6 +13,7 @@ function Todo() {
 
   const [schedule, setSchedule] = useState(null);
   const [scheduleLoading, setScheduleLoading] = useState(false);
+  const [breakDownTasksLoading, setBreakDownTasksLoading] = useState(false);
 
   const [editingTaskId, setEditingTaskId] = useState(null);
 
@@ -103,6 +104,8 @@ function Todo() {
   async function breakDownTasks() {
     console.log('Break Down Tasks clicked!');
     console.log('Tasks being sent:', tasks);
+
+    setBreakDownTasksLoading(true);
 
     try {
       const response = await fetch(
@@ -737,7 +740,9 @@ function Todo() {
             tasks.length === 0
           }
         >
-          Break Down Tasks
+          {breakDownTasksLoading
+            ? 'Breaking Down Tasks...'
+            : 'Break Down Tasks'}
         </button>
       </div>
 
