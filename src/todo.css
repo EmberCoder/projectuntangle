@@ -57,6 +57,7 @@
   align-items: center;
   gap: 12px;
   margin-top: 40px;
+  padding: 0 20px;
 }
 
 .emptyState input {
@@ -93,6 +94,7 @@
   padding: 15px;
   background-color: #8b5a5a;
   border-radius: 15px;
+  padding: 15px 20px;
 }
 
 .editForm input {
@@ -331,4 +333,16 @@ body {
   margin-top: 6px;
   line-height: 1.4;
 }
-```
+
+.dueDateInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: #3A3A32;
+
+}

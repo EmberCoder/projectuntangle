@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import './todo.css';
 import NavBar from './components/NavBar/NavBar';
+import './todo.css';
 
 function Todo() {
   const [tasks, setTasks] = useState([]);
@@ -332,6 +332,7 @@ function Todo() {
               )
             }
           />
+          
 
           <input
             type="date"
