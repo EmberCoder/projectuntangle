@@ -11,6 +11,7 @@ function App() {
   const [scale, setScale] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState(true);
+  const [stressLogged, setStressLogged] = useState(false);
 
   return (
     <Router>
@@ -28,6 +29,7 @@ function App() {
                     setScale={setScale}
                     setShowPopup={setShowPopup}
                     setShowQuestion={setShowQuestion}
+                    setStressLogged={setStressLogged}
                   />
                 )}
 
@@ -37,6 +39,12 @@ function App() {
                     setShowPopup={setShowPopup} 
                     setShowQuestion={setShowQuestion} 
                   />
+                )}
+
+                {stressLogged && (
+                  <div className="StressLogged">
+                    <h3 className="logged">Logged!</h3>
+                  </div>
                 )}
 
                 <div style={{ margin: '1rem' }}>
