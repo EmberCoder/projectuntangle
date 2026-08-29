@@ -1,0 +1,35 @@
+button {
+    margin-bottom: 1.5rem;
+}
+
+.loginButton {
+    width: 20rem;
+    height: 4rem;
+    border-radius: 0.5rem;
+    background-color: rgb(181, 155, 127);
+    font-size: 2rem;
+    font-family: "Fredoka", sans-serif;
+    color: black;
+}
+
+.registerButton {
+    width: 20rem;
+    height: 4rem;
+    border-radius: 0.5rem;
+    background-color: rgb(181, 155, 127);
+    font-size: 2rem;
+    font-family: "Fredoka", sans-serif;
+    color: black;
+}
+
+.guestButton {
+    width: 50%;
+    height: 100%;
+    border-radius: 0.5rem;
+    background-color: rgb(255, 242, 229);
+    border-color: rgb(255, 242, 229);
+    font-size: 1.25rem;
+    font-family: "Fredoka", sans-serif;
+    color: rgb(139, 145, 97);
+    font-weight: 600;
+}
