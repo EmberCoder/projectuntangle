@@ -1,9 +1,9 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import EmailLogin from './components/Login/EmailLogin';
 import GoogleLogin from './components/Login/GoogleLogin';
 import { auth } from './firebase';
-import EmailLogin from './components/Login/EmailLogin';
 
 const LogInputs = () => {
   const [email, setEmail] = useState('');

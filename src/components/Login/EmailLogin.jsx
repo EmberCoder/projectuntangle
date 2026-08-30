@@ -2,10 +2,10 @@ import './Login.css';
 
 const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, isSignUp }) => {
   return (
-       <div className="emailLogin">
+       <div>
         <form onSubmit={handleEmailAuth}>
-          <div className="inputField">
-            <input 
+          <div>
+            <input className="inputField"
               type="email" 
               placeholder="Email" 
               value={email} 
@@ -13,8 +13,8 @@ const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, i
               required 
             />
           </div>
-          <div className="inputField">
-            <input 
+          <div>
+            <input className="inputField"
               type="password" 
               placeholder="Password" 
               value={password} 
@@ -22,7 +22,7 @@ const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, i
               required 
             />
           </div>
-          <button type="submit">
+          <button type="submit" className="emailLoginButton">
             {isSignUp ? "Sign Up" : "Log In"}
           </button>
         </form>
