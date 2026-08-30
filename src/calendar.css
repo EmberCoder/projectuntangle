@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
+.CalendarPage {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 6rem 1.5rem;
+  font-family: "Fredoka", sans-serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.CalendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.CalendarTitle {
+  font-size: 3rem;
+  color: rgb(133, 86, 60);
+  margin: 0;
+  font-weight: 600;
+  font-family: "Fredoka", sans-serif;
+}
+
+.IconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.AuthBar {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.AuthButton {
+  background-color: rgb(133, 86, 60);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: "Fredoka", sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.AuthButton:hover {
+  opacity: 0.9;
+}
+
+.CalendarCard {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 2px solid rgb(181, 155, 127);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.MonthLabel {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: rgb(133, 86, 60);
+  font-size: 1.4rem;
+}
+
+.DaysHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgb(181, 155, 127);
+  margin-bottom: 0.5rem;
+}
+
+.CalendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4rem;
+}
+
+.CalendarCell {
+  aspect-ratio: 1;
+  border: 1px solid rgb(181, 155, 127);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.DayNumber {
+  font-size: 0.85rem;
+  color: rgb(133, 86, 60);
+  font-weight: 500;
+}
+
+.PlusButtonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.PlusButton {
+  background-color: rgb(236, 72, 153);
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.PlusButton:hover {
+  transform: scale(1.05);
+}
+
+/* Modal Popup Styling */
+
+.ModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.ModalContent {
+  background-color: #F3CEE2;
+  border-radius: 1.25rem;
+  width: 85%;
+  max-width: 340px;
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  font-family: "Fredoka", sans-serif;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.ModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.EventForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.EventInput {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: none;
+  font-size: 1rem;
+  font-family: "Fredoka", sans-serif;
+  outline: none;
+  color: rgb(133, 86, 60);
+}
+
+.CategoryPicker {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.ColorBadge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.Divider {
+  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  margin: 0.25rem 0;
+}
+
+.ActionButtonPrimary {
+  background-color: rgb(133, 86, 60);
+  color: #ffffff;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.75rem;
+  font-weight: 600;
+  font-family: "Fredoka", sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.ActionButtonSecondary {
+  background-color: #ffffff;
+  color: rgb(133, 86, 60);
+  border: none;
+  border-radius: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: "Fredoka", sans-serif;
+  cursor: pointer;
+  text-align: center;
+}

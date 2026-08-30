@@ -3,7 +3,6 @@ import './selfcareapp.css';
 import { MagnifyingGlass } from 'phosphor-react';
 import NavBar from './components/NavBar/NavBar';
 
-// Make sure 'export default' is present right here:
 export default function SelfCare() {
   const [zipCode, setZipCode] = useState('');
   const [events, setEvents] = useState([]);
@@ -19,20 +18,42 @@ export default function SelfCare() {
     { title: 'Crisis Support Services', number: '800-273-8255' },
   ];
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (zipCode.trim() !== '') {
+    const cleanedZip = zipCode.trim();
+
+    if (cleanedZip !== '') {
       setLoading(true);
       setHasSearched(true);
-      setTimeout(() => {
+
+      try {
+        // Fetch events from your Node/Express backend (Option B)
+        const response = await fetch(`/api/events?zipCode=${encodeURIComponent(cleanedZip)}`);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch events from server');
+        }
+
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error('Eventbrite API Fetch Error:', error);
         setEvents([]);
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     }
   };
 
   return (
-    <div className="SelfCarePage">
+    <div
+      className="SelfCarePage"
+      style={{
+        paddingBottom: '80px', // Ensures content isn't covered by fixed bottom NavBar
+        minHeight: '100vh',
+        boxSizing: 'border-box',
+      }}
+    >
       <h1 className="SelfCareHeader">Self Care Zone</h1>
       <p className="SelfCareSubheading">
         Want to check out mental health events near you?
@@ -73,15 +94,51 @@ export default function SelfCare() {
             No events found in this zip code.
           </p>
         ) : (
-          <div>
+          <div
+            className="EventsGrid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '1rem',
+              marginTop: '1rem',
+            }}
+          >
             {events.map((evt) => (
-              <div key={evt.id} className="EventCard">
-                <div>
-                  <h3 className="EventTitle">{evt.title}</h3>
-                  <p className="EventLocation">{evt.location}</p>
-                  <p className="EventDate">{evt.date}</p>
-                </div>
-                <img src={evt.imageUrl} alt={evt.title} className="EventImage" />
+              <div
+                key={evt.id}
+                className="EventCard"
+                style={{
+                  backgroundColor: '#ffffff',
+                  border: '2px solid rgb(133, 86, 60)',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+                  textAlign: 'left',
+                }}
+              >
+                <h3
+                  className="EventTitle"
+                  style={{
+                    color: 'rgb(133, 86, 60)',
+                    fontSize: '1.2rem',
+                    margin: '0 0 0.5rem 0',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {evt.title}
+                </h3>
+                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
+                  <strong>Location:</strong> {evt.location}
+                </p>
+                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
+                  <strong>Date:</strong> {evt.date}
+                </p>
+                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
+                  <strong>Time:</strong> {evt.time}
+                </p>
+                <p style={{ margin: '0.25rem 0 0 0', color: 'rgb(133, 86, 60)', fontWeight: 'bold' }}>
+                  <strong>Cost:</strong> {evt.cost}
+                </p>
               </div>
             ))}
           </div>
@@ -92,9 +149,9 @@ export default function SelfCare() {
       <div className="ResourceCard">
         <p>
           Looking for extra support?{' '}
-          <a 
-            href="https://www.psychologytoday.com" 
-            target="_blank" 
+          <a
+            href="https://www.psychologytoday.com"
+            target="_blank"
             rel="noopener noreferrer"
           >
             Psychology Today
@@ -124,7 +181,20 @@ export default function SelfCare() {
         </div>
       </section>
 
-      <NavBar />
+      {/* Fixed Bottom Navigation Bar */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          backgroundColor: '#ffffff',
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
+        }}
+      >
+        <NavBar />
+      </div>
     </div>
   );
 }
