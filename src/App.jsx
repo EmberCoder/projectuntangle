@@ -6,6 +6,7 @@ import NavBar from './components/NavBar/NavBar';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
 import Login from './login';
+import LogInputs from './LogInputs';
 import SelfCare from './selfcare';
 import Todo from './todo';
 
@@ -94,6 +95,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/selfcare" element={<SelfCare />} />
+        <Route path="/LogInputs" element={<LogInputs />} />
       </Routes>
     </Router>
   );

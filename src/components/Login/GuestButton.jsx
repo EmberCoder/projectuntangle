@@ -1,4 +1,4 @@
-import './LoginScreenButtons.css';
+import './Login.css';
 
 const GuestButton = () => {
   return (

@@ -33,3 +33,19 @@ button {
     color: rgb(139, 145, 97);
     font-weight: 600;
 }
+
+.googleLoginButton {
+    display: inline-flex;
+    height: 2.5rem;
+    width: 12rem;
+    align-items: center;
+    justify-content: right;
+    background-color: #ffffff;
+    color: #1f1f1f;
+    font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 4px;
+
+}
