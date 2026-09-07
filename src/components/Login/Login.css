@@ -71,3 +71,14 @@ button {
     font-family: "Fredoka", sans-serif;
     color: black;
 }
+
+.backButton {
+    float: left;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+    color: rgb(181, 155, 127);
+    font-weight: 600;
+    text-decoration: none;
+}

@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import GuestPopup from './components/GuestPopup/GuestPopup';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
 import Login from './login';
 import LogInputs from './LogInputs';
 import SelfCare from './selfcare';
+import SignUp from './SignUp';
 import Todo from './todo';
 
 
@@ -32,12 +34,13 @@ function Home() {
   return (
     <div>
       <div className="HomepageContent">
+        {username === "Guest" && <BackButton />}
+
         <h1 className="Welcome">Welcome back, {username}!</h1>
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
         )}
-
 
         {showQuestion && (
           <StressQuestion
@@ -96,6 +99,7 @@ function App() {
         <Route path="/todo" element={<Todo />} />
         <Route path="/selfcare" element={<SelfCare />} />
         <Route path="/LogInputs" element={<LogInputs />} />
+        <Route path="/SignUp" element={<SignUp />} />
       </Routes>
     </Router>
   );

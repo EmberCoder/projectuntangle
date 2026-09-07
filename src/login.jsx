@@ -11,7 +11,9 @@ const Login = () => {
         <LoginButton />
       </Link>
 
-      <RegisterButton />
+      <Link to="/SignUp">
+        <RegisterButton />
+      </Link>
 
       <Link to="/home" state={{ username: "Guest" }}>
         <GuestButton />
