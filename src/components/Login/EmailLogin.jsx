@@ -1,9 +1,10 @@
 import './Login.css';
 
-const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, isSignUp }) => {
+const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, isSignUp, error }) => {
   return (
        <div>
         <form onSubmit={handleEmailAuth}>
+          {error && <p className="error">{error}</p>}
           <div>
             <input className="inputField"
               type="email" 

@@ -82,3 +82,13 @@ button {
     font-weight: 600;
     text-decoration: none;
 }
+
+input {
+    color: black;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}

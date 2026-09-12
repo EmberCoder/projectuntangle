@@ -25,7 +25,21 @@ const LogInputs = () => {
         navigate('/home', {state: { username: result.user.email }});
       }
     } catch (error) {
-      setError(error.message);
+      const errorCode = error?.code || '';
+      const errorMessage = error?.message || '';
+
+      if (!isSignUp && (
+        errorCode === 'auth/invalid-credential' ||
+        errorCode === 'auth/user-not-found' ||
+        errorCode === 'auth/wrong-password' ||
+        errorMessage.includes('auth/invalid-credential') ||
+        errorMessage.includes('auth/user-not-found') ||
+        errorMessage.includes('auth/wrong-password')
+      )) {
+        setError('Invalid username or password');
+      } else {
+        setError(error.message);
+      }
     }
   };
 
@@ -42,6 +56,7 @@ const LogInputs = () => {
         setPassword={setPassword}
         handleEmailAuth={handleEmailAuth}
         isSignUp={isSignUp}
+        error={error}
       />
     </div>
   );
