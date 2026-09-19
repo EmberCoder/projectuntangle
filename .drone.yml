@@ -1,0 +1,16 @@
+kind: pipeline
+type: docker
+name: react-build
+
+steps:
+  - name: install-and-build
+    image: node:22-alpine
+    commands:
+      - npm ci
+      - npm run build
+
+trigger:
+  branch:
+    - main
+  event:
+    - push
