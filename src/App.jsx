@@ -11,6 +11,7 @@ import LogInputs from './LogInputs';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
+import Journal from './journal'
 
 
 function Home() {
@@ -97,6 +98,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/todo" element={<Todo />} />
+        <Route path="/journal" element={<Journal />} />
         <Route path="/selfcare" element={<SelfCare />} />
         <Route path="/LogInputs" element={<LogInputs />} />
         <Route path="/SignUp" element={<SignUp />} />
