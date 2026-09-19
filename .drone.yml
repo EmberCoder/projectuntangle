@@ -14,6 +14,7 @@ steps:
         path: /build/projectuntangle
     commands:
       - rm -rf /build/projectuntangle/*
+      - mkdir -p /build/projectuntangle
       # Install dependencies
       - npm ci
       # Run compilation build
