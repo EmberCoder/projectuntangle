@@ -1,17 +1,25 @@
 kind: pipeline
 type: docker
-name: react-build
+name: react-local-deploy
 
 platform:
   os: linux
   arch: arm64
 
 steps:
-  - name: install-and-build
+  - name: build-and-deploy
     image: node:22-alpine
+    volumes:
+      - name: production-web-root
+        path: /build/projectuntangle
     commands:
+      - rm -rf /build/projectuntangle/*
+      # Install dependencies
       - npm ci
+      # Run compilation build
       - npm run build
+      # Copy static assets directly to your shared host volume
+      - cp -r dist/* /build/projectuntangle/
 
 trigger:
   branch:
