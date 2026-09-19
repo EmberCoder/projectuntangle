@@ -2,6 +2,10 @@ kind: pipeline
 type: docker
 name: react-build
 
+platform:
+  os: linux
+  arch: arm64
+
 steps:
   - name: install-and-build
     image: node:22-alpine
