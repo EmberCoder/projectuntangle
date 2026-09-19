@@ -19,10 +19,10 @@ const LogInputs = () => {
     try {
       if (isSignUp) {
         const result = await createUserWithEmailAndPassword(auth, email, password);
-        navigate('/home', {state: { username: result.user.email }});
+        navigate('/Onboarding');
       } else {
         const result = await signInWithEmailAndPassword(auth, email, password);
-        navigate('/home', {state: { username: result.user.email }});
+        navigate('/Onboarding');
       }
     } catch (error) {
       const errorCode = error?.code || '';

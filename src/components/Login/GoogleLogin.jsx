@@ -14,7 +14,7 @@ const GoogleLogin = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const firstName = user.displayName ? user.displayName.split(' ')[0] : '';
-      navigate('/home', { state: { username: firstName } });
+      navigate('/Onboarding', { state: { username: firstName } });
     } catch (error) {
       console.error(error.message);
       setError(error.message);
