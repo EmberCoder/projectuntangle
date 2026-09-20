@@ -11,21 +11,21 @@ steps:
     image: node:22-alpine
     volumes:
       - name: production-web-root
-        path: /build/projectuntangle
+        path: /mnt/target # Use a clean internal path to avoid confusion
     commands:
-      # Clear old build artifacts
-      - rm -rf /build/projectuntangle/*
       # Install dependencies
       - npm ci
       # Run compilation build
       - npm run build
+      # Clear old build artifacts on the host
+      - rm -rf /mnt/target/*
       # Copy static assets directly to your shared host volume
-      - cp -r dist/* /build/projectuntangle/
+      - cp -r dist/* /mnt/target/
 
 volumes:
   - name: production-web-root
     host:
-      # MUST match how the Drone Runner container views the directory
+      # This points to the runner's /build/projectuntangle directory
       path: /build/projectuntangle 
 
 trigger:
