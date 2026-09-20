@@ -13,19 +13,20 @@ steps:
       - name: production-web-root
         path: /build/projectuntangle
     commands:
+      # Clear old build artifacts
       - rm -rf /build/projectuntangle/*
-      - mkdir -p /build/projectuntangle
       # Install dependencies
       - npm ci
       # Run compilation build
       - npm run build
       # Copy static assets directly to your shared host volume
       - cp -r dist/* /build/projectuntangle/
-volumes:
-    - name: production-web-root
-      host:
-        path: /build/projectuntangle
 
+volumes:
+  - name: production-web-root
+    host:
+      # MUST match how the Drone Runner container views the directory
+      path: /build/projectuntangle 
 
 trigger:
   branch:
