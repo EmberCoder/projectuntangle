@@ -21,6 +21,9 @@ steps:
       - rm -rf /mnt/target/*
       # Copy static assets directly to your shared host volume
       - cp -r dist/* /mnt/target/
+      - ls -la /mnt/target # List contents to verify deployment
+      - echo "Deployment completed successfully."
+      - sleep 100
 
 volumes:
   - name: production-web-root
