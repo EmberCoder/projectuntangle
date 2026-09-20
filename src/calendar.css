@@ -1,15 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
+/* --- Global Reset & Root Viewport Setup --- */
+html, body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 242, 229);
+  font-family: "Fredoka", sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* --- Calendar Page Container --- */
 .CalendarPage {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 6rem 1.5rem;
+  padding: 1.5rem 1.5rem 7rem 1.5rem; /* 7rem bottom padding prevents content from overlapping navbar */
   font-family: "Fredoka", sans-serif;
   min-height: 100vh;
   box-sizing: border-box;
 }
 
+/* --- Header Section --- */
 .CalendarHeader {
   display: flex;
   justify-content: space-between;
@@ -35,6 +51,7 @@
   justify-content: center;
 }
 
+/* --- Google Auth Sync Bar --- */
 .AuthBar {
   margin-bottom: 1.5rem;
   display: flex;
@@ -58,6 +75,7 @@
   opacity: 0.9;
 }
 
+/* --- Calendar Main Card --- */
 .CalendarCard {
   background-color: #ffffff;
   border-radius: 1rem;
@@ -107,6 +125,7 @@
   font-weight: 500;
 }
 
+/* --- Action Plus Button --- */
 .PlusButtonWrapper {
   display: flex;
   justify-content: center;
@@ -131,8 +150,7 @@
   transform: scale(1.05);
 }
 
-/* Modal Popup Styling */
-
+/* --- Modal Popup Styling --- */
 .ModalOverlay {
   position: fixed;
   top: 0;
@@ -236,4 +254,16 @@
   font-family: "Fredoka", sans-serif;
   cursor: pointer;
   text-align: center;
+}
+
+/* --- Fixed Bottom Navigation Wrapper --- */
+.FixedNavBarWrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }

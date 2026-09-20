@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Settings } from 'lucide-react';
-import './calendar.css';
+import './Calendar.css';
 import NavBar from './components/NavBar/NavBar';
 
 // Categories matching Google Calendar color IDs
@@ -22,34 +22,17 @@ export default function Calendar() {
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   // Google API Client Setup
- useEffect(() => {
-  const initGapi = async () => {
+  useEffect(() => {
     /* global gapi */
-    if (typeof gapi !== 'undefined' && gapi.client) {
-      try {
-        await gapi.client.init({
-          apiKey: 'AIzaSyAweTv9HK6OqncBM5kg3OkMJFJ0f3gOLl8',
-          clientId: '167839438143-oqi3l734kls7ptmtitp0rur85ur84a2j.apps.googleusercontent.com',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-          scope: 'https://www.googleapis.com/auth/calendar.events',
-        });
-
-        if (gapi.auth2) {
-          const authInstance = gapi.auth2.getAuthInstance();
-          setIsSignedIn(authInstance.isSignedIn.get());
-          authInstance.isSignedIn.listen(setIsSignedIn);
-        }
-      } catch (err) {
-        console.error('Google API Init Error:', err);
+    const loadGapi = () => {
+      if (typeof gapi !== 'undefined') {
+        gapi.load('client:auth2', initGapiClient);
+      } else {
+        setTimeout(loadGapi, 300);
       }
-    }
-  };
-
-  // Wait for gapi script tag to be ready
-  if (window.gapi) {
-    window.gapi.load('client:auth2', initGapi);
-  }
-}, []);
+    };
+    loadGapi();
+  }, []);
 
   const initGapiClient = async () => {
     try {
@@ -137,124 +120,116 @@ export default function Calendar() {
   });
 
   return (
-    <div className="CalendarPage">
-      {/* Header */}
-      <header className="CalendarHeader">
-        <h1 className="CalendarTitle">Calendar</h1>
-        <button className="IconButton" aria-label="Settings">
-          <Settings size={26} color="rgb(133, 86, 60)" />
-        </button>
-      </header>
+    <>
+      <div className="CalendarPage">
+        {/* Header */}
+        <header className="CalendarHeader">
+          <h1 className="CalendarTitle">Calendar</h1>
+          <button className="IconButton" aria-label="Settings">
+            <Settings size={26} color="rgb(133, 86, 60)" />
+          </button>
+        </header>
 
-      {/* Google Sign-In Status Banner */}
-      <div className="AuthBar">
-        <button className="AuthButton" onClick={handleAuthClick}>
-          {isSignedIn ? 'Disconnect Google Calendar' : 'Sync Google Calendar'}
-        </button>
-      </div>
-
-      {/* Calendar Grid Frame */}
-      <div className="CalendarCard">
-        <div className="MonthLabel">
-          {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+        {/* Google Sign-In Status Banner */}
+        <div className="AuthBar">
+          <button className="AuthButton" onClick={handleAuthClick}>
+            {isSignedIn ? 'Disconnect Google Calendar' : 'Sync Google Calendar'}
+          </button>
         </div>
-        <div className="DaysHeader">
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
-            <span key={idx}>{day}</span>
-          ))}
-        </div>
-        <div className="CalendarGrid">
-          {calendarDays.map((day, index) => (
-            <div key={index} className="CalendarCell">
-              {day && <span className="DayNumber">{day}</span>}
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Pink Plus Trigger Button */}
-      <div className="PlusButtonWrapper">
-        <button 
-          className="PlusButton" 
-          onClick={() => setIsPopupOpen(true)}
-          aria-label="Add Event / Log Options"
-        >
-          <Plus size={30} color="#FFF" />
-        </button>
-      </div>
-
-      {/* Popup Modal */}
-      {isPopupOpen && (
-        <div className="ModalOverlay">
-          <div className="ModalContent">
-            <button className="CloseButton" onClick={() => setIsPopupOpen(false)}>
-              <X size={18} color="#666" />
-            </button>
-
-            <div className="ModalBody">
-              <form onSubmit={handleAddEvent} className="EventForm">
-                <input
-                  type="text"
-                  placeholder="New Event Title..."
-                  value={eventTitle}
-                  onChange={(e) => setEventTitle(e.target.value)}
-                  className="EventInput"
-                />
-                
-                <div className="CategoryPicker">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      type="button"
-                      key={cat.name}
-                      onClick={() => setSelectedCategory(cat)}
-                      className="ColorBadge"
-                      style={{
-                        backgroundColor: cat.color,
-                        border: selectedCategory.name === cat.name ? '2.5px solid rgb(133, 86, 60)' : 'none'
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <button type="submit" className="ActionButtonPrimary">
-                  Add to Google Calendar
-                </button>
-              </form>
-
-              <hr className="Divider" />
-
-              <button 
-                className="ActionButtonSecondary" 
-                onClick={() => alert('To-Do List navigation coming soon!')}
-              >
-                Go to To-Do List for this day
-              </button>
-
-              <button 
-                className="ActionButtonSecondary" 
-                onClick={() => alert('Symptom logging coming soon!')}
-              >
-                Log symptoms for this day
-              </button>
-            </div>
+        {/* Calendar Grid Frame */}
+        <div className="CalendarCard">
+          <div className="MonthLabel">
+            {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+          </div>
+          <div className="DaysHeader">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+              <span key={idx}>{day}</span>
+            ))}
+          </div>
+          <div className="CalendarGrid">
+            {calendarDays.map((day, index) => (
+              <div key={index} className="CalendarCell">
+                {day && <span className="DayNumber">{day}</span>}
+              </div>
+            ))}
           </div>
         </div>
-      )}
 
-      {/* Fixed Bottom Navigation Bar */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          backgroundColor: '#ffffff',
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
-        }}
-      >
+        {/* Plus Trigger Button */}
+        <div className="PlusButtonWrapper">
+          <button 
+            className="PlusButton" 
+            onClick={() => setIsPopupOpen(true)}
+            aria-label="Add Event / Log Options"
+          >
+            <Plus size={30} color="#FFF" />
+          </button>
+        </div>
+
+        {/* Popup Modal */}
+        {isPopupOpen && (
+          <div className="ModalOverlay">
+            <div className="ModalContent">
+              <button className="CloseButton" onClick={() => setIsPopupOpen(false)}>
+                <X size={18} color="#666" />
+              </button>
+
+              <div className="ModalBody">
+                <form onSubmit={handleAddEvent} className="EventForm">
+                  <input
+                    type="text"
+                    placeholder="New Event Title..."
+                    value={eventTitle}
+                    onChange={(e) => setEventTitle(e.target.value)}
+                    className="EventInput"
+                  />
+                  
+                  <div className="CategoryPicker">
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        type="button"
+                        key={cat.name}
+                        onClick={() => setSelectedCategory(cat)}
+                        className="ColorBadge"
+                        style={{
+                          backgroundColor: cat.color,
+                          border: selectedCategory.name === cat.name ? '2.5px solid rgb(133, 86, 60)' : 'none'
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <button type="submit" className="ActionButtonPrimary">
+                    Add to Google Calendar
+                  </button>
+                </form>
+
+                <hr className="Divider" />
+
+                <button 
+                  className="ActionButtonSecondary" 
+                  onClick={() => alert('To-Do List navigation coming soon!')}
+                >
+                  Go to To-Do List for this day
+                </button>
+
+                <button 
+                  className="ActionButtonSecondary" 
+                  onClick={() => alert('Symptom logging coming soon!')}
+                >
+                  Log symptoms for this day
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation Bar Fixed Outside Page Scroll Flow */}
+      <div className="FixedNavBarWrapper">
         <NavBar />
       </div>
-    </div>
+    </>
   );
 }
