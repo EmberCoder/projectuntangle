@@ -9,7 +9,7 @@ import StressQuestion from './components/StressQuestion/StressQuestion';
 import Journal from './journal';
 import Login from './login';
 import LogInputs from './LogInputs';
-import Onboarding from './onboarding';
+import Onboarding from './Onboarding';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
