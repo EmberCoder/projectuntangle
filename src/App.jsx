@@ -13,6 +13,7 @@ import Onboarding from './Onboarding';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
+import Calendar from './calendar';
 
 
 function Home() {
