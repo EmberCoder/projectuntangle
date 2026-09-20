@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import './selfcareapp.css';
 import { MagnifyingGlass } from 'phosphor-react';
+import { useState } from 'react';
 import NavBar from './components/NavBar/NavBar';
+import './selfcareapp.css';
 
 export default function SelfCare() {
   const [zipCode, setZipCode] = useState('');
