@@ -21,6 +21,11 @@ steps:
       - npm run build
       # Copy static assets directly to your shared host volume
       - cp -r dist/* /build/projectuntangle/
+volumes:
+    - name: production-web-root
+      host:
+        path: /build/projectuntangle
+
 
 trigger:
   branch:
