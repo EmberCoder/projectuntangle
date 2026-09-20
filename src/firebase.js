@@ -15,5 +15,46 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+const ONBOARDING_KEY = 'serenity_onboarding_status';
+
+export const getOnboardingStatus = (email) => {
+  if (!email) return 'incomplete';
+
+  try {
+    const raw = localStorage.getItem(ONBOARDING_KEY);
+    const statuses = raw ? JSON.parse(raw) : {};
+    const status = statuses[email.toLowerCase()];
+    return status || 'incomplete';
+  } catch {
+    return 'incomplete';
+  }
+};
+
+export const setOnboardingStatus = (email, status) => {
+  if (!email) return;
+
+  try {
+    const raw = localStorage.getItem(ONBOARDING_KEY);
+    const statuses = raw ? JSON.parse(raw) : {};
+    statuses[email.toLowerCase()] = status;
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify(statuses));
+  } catch {
+    // ignore storage issues in restricted environments
+  }
+};
+
+export const clearOnboardingStatus = (email) => {
+  if (!email) return;
+
+  try {
+    const raw = localStorage.getItem(ONBOARDING_KEY);
+    const statuses = raw ? JSON.parse(raw) : {};
+    delete statuses[email.toLowerCase()];
+    localStorage.setItem(ONBOARDING_KEY, JSON.stringify(statuses));
+  } catch {
+    // ignore storage issues in restricted environments
+  }
+};
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

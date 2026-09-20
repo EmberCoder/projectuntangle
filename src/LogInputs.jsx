@@ -1,10 +1,10 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import EmailLogin from './components/Login/EmailLogin';
 import GoogleLogin from './components/Login/GoogleLogin';
-import { auth } from './firebase';
+import { auth, getOnboardingStatus, setOnboardingStatus } from './firebase';
 
 const LogInputs = () => {
   const [email, setEmail] = useState('');
@@ -16,14 +16,37 @@ const LogInputs = () => {
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     setError('');
+
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     try {
       if (isSignUp) {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
-        navigate('/Onboarding');
-      } else {
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        navigate('/Onboarding');
+        setOnboardingStatus(trimmedEmail, 'incomplete');
+        navigate('/Onboarding', {
+          state: {
+            email: trimmedEmail,
+            password: trimmedPassword,
+          },
+        });
+        return;
       }
+
+      const onboardingStatus = getOnboardingStatus(trimmedEmail);
+
+      if (onboardingStatus !== 'complete') {
+        navigate('/Onboarding', {
+          state: {
+            email: trimmedEmail,
+            password: trimmedPassword,
+            username: trimmedEmail.split('@')[0],
+          },
+        });
+        return;
+      }
+
+      const result = await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
+      navigate('/home', { state: { username: result.user.email?.split('@')[0] || 'User' } });
     } catch (error) {
       const errorCode = error?.code || '';
       const errorMessage = error?.message || '';

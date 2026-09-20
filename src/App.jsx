@@ -37,7 +37,13 @@ function Home() {
       <div className="HomepageContent">
         {username === "Guest" && <BackButton />}
 
-        <h1 className="Welcome">Welcome back, {username}!</h1>
+        {username === "Guest" ? (
+          <h1 className="Welcome">Welcome, Guest!</h1>
+        ) : (
+          <div className="WelcomeBack">
+            <h1 className="Welcome">Welcome back, {username}!</h1>
+          </div>
+        )}
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />

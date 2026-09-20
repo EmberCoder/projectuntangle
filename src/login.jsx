@@ -15,7 +15,7 @@ const Login = () => {
         <RegisterButton />
       </Link>
 
-      <Link to="/Onboarding" state={{ username: "Guest" }}>
+      <Link to="/home" state={{ username: "Guest" }}>
         <GuestButton />
       </Link>
     </div>
