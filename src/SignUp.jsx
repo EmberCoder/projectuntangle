@@ -1,10 +1,9 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import EmailLogin from './components/Login/EmailLogin';
 import GoogleLogin from './components/Login/GoogleLogin';
-import { auth } from './firebase';
+import { setOnboardingStatus } from './firebase';
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -15,12 +14,28 @@ const SignUp = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
         setError('');
-        try {
-            const result = await createUserWithEmailAndPassword(auth, email, password);
-            navigate('/home', { state: { username: result.user.email } });
-        } catch (error) {
-            setError(error.message);
+
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedEmail || !trimmedPassword) {
+            setError('Please enter both an email and password.');
+            return;
         }
+
+        if (trimmedPassword.length < 6) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
+
+        setOnboardingStatus(trimmedEmail, 'incomplete');
+
+        navigate('/Onboarding', {
+            state: {
+                email: trimmedEmail,
+                password: trimmedPassword,
+            },
+        });
     }
   return (
     <div>
@@ -36,6 +51,7 @@ const SignUp = () => {
         setPassword={setPassword}
         handleEmailAuth={handleSignUp}
         isSignUp={true}
+        error={error}
       />
     </div>
   )

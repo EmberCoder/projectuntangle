@@ -8,6 +8,7 @@ import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
 import Login from './login';
 import LogInputs from './LogInputs';
+import Onboarding from './onboarding';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
@@ -37,7 +38,13 @@ function Home() {
       <div className="HomepageContent">
         {username === "Guest" && <BackButton />}
 
-        <h1 className="Welcome">Welcome back, {username}!</h1>
+        {username === "Guest" ? (
+          <h1 className="Welcome">Welcome, Guest!</h1>
+        ) : (
+          <div className="WelcomeBack">
+            <h1 className="Welcome">Welcome back, {username}!</h1>
+          </div>
+        )}
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
@@ -102,6 +109,7 @@ function App() {
         <Route path="/selfcare" element={<SelfCare />} />
         <Route path="/LogInputs" element={<LogInputs />} />
         <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/Onboarding" element={<Onboarding />} />
       </Routes>
     </Router>
   );
