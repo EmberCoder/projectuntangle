@@ -9,13 +9,28 @@ platform:
 steps:
   - name: build-and-deploy
     image: node:22-alpine
+    environment:
+      VITE_FIREBASE_API_KEY:
+        from_secret: VITE_FIREBASE_API_KEY
+      VITE_FIREBASE_AUTH_DOMAIN:
+        from_secret: VITE_FIREBASE_AUTH_DOMAIN
+      VITE_FIREBASE_PROJECT_ID:
+        from_secret: VITE_FIREBASE_PROJECT_ID
+      VITE_FIREBASE_STORAGE_BUCKET:
+        from_secret: VITE_FIREBASE_STORAGE_BUCKET
+      VITE_FIREBASE_MESSAGING_SENDER_ID:
+        from_secret: VITE_FIREBASE_MESSAGING_SENDER_ID
+      VITE_FIREBASE_APP_ID:
+        from_secret: VITE_FIREBASE_APP_ID
+      VITE_FIREBASE_MEASUREMENT_ID:
+        from_secret: VITE_FIREBASE_MEASUREMENT_ID
     volumes:
       - name: production-web-root
         path: /mnt/target # Use a clean internal path to avoid confusion
     commands:
       # Install dependencies
       - npm ci
-      # Run compilation build
+      # Run compilation build with Firebase config injected from Drone secrets
       - npm run build
       # Clear old build artifacts on the host
       - rm -rf /mnt/target/*

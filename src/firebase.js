@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCnhjb-gwaPOUghPdWOpDbAeI8yXNVt7bg",
-  authDomain: "serenity-b4b72.firebaseapp.com",
-  projectId: "serenity-b4b72",
-  storageBucket: "serenity-b4b72.firebasestorage.app",
-  messagingSenderId: "749474732425",
-  appId: "1:749474732425:web:143a6e2fd1b20f2382a958",
-  measurementId: "G-WFLEV3WFNR"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
