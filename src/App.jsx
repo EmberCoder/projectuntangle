@@ -6,12 +6,12 @@ import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
+import Journal from './journal';
 import Login from './login';
 import LogInputs from './LogInputs';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
-import Journal from './journal'
 
 
 function Home() {
@@ -37,7 +37,7 @@ function Home() {
       <div className="HomepageContent">
         {username === "Guest" && <BackButton />}
 
-        <h1 className="Welcome">Welcome back, {username}!</h1>
+        <h1 className="Welcome">Welcome back {username}!</h1>
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
