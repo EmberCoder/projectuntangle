@@ -200,10 +200,17 @@ button {
     background: none;
     border: none;
     font-size: 1.5rem;
-    margin-left: 1rem;
+    margin: 0 0 1rem 1rem;
     color: rgb(181, 155, 127);
     font-weight: 600;
     text-decoration: none;
+}
+
+.backButton + h1,
+.backButton + .todoTitle,
+.backButton + .journalTitle,
+.backButton + .SelfCareHeader {
+    margin-top: 4.5rem;
 }
 
 input {

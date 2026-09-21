@@ -1,9 +1,21 @@
 import { MagnifyingGlass } from 'phosphor-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
+import { auth } from './firebase';
 import './selfcareapp.css';
 
 export default function SelfCare() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => unsubscribe();
+  }, []);
   const [zipCode, setZipCode] = useState('');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,6 +44,8 @@ export default function SelfCare() {
 
   return (
     <div className="SelfCarePage">
+      {isLoggedIn ? <ProfileButton /> : <BackButton />}
+
       <h1 className="SelfCareHeader">Self Care Zone</h1>
       <p className="SelfCareSubheading">
         Want to check out mental health events near you?

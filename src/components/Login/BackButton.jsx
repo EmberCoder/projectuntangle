@@ -4,13 +4,8 @@ import './Login.css';
 const BackButton = () => {
   return (
     <div>
-      <Link className="backButton" 
-        onClick={(e) => {
-          e.preventDefault();
-          window.history.back();
-        }}
-      >
-        &lt; Back
+      <Link className="backButton" to="/">
+        &lt; Back to Login
       </Link>
     </div>
   );
