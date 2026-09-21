@@ -1,8 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton';
+import { auth } from './firebase';
 import './todo.css';
 
 function Todo() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => unsubscribe();
+  }, []);
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -305,17 +317,9 @@ function Todo() {
 
   return (
     <div>
-      <div className="todoHeader">
-        <button>
-          Settings
-        </button>
+      {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-        <button>
-          Profile
-        </button>
-      </div>
-
-      <h1 className="todoTitle">
+      <h1 className="todoTitle" style={{ margin: 0, lineHeight: 1, textAlign: 'center', marginTop: '6rem' }}>
         To-Do List
       </h1>
 

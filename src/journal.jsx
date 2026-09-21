@@ -11,11 +11,14 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
 import { auth, db } from './firebase';
 import './journal.css';
 
 function Journal() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
   const [journalMode, setJournalMode] = useState(null);
   const [journalText, setJournalText] = useState('');
   const [entries, setEntries] = useState([]);
@@ -46,6 +49,7 @@ function Journal() {
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setIsLoggedIn(Boolean(currentUser));
 
       if (unsubscribeEntries) {
         unsubscribeEntries();
@@ -170,12 +174,11 @@ function Journal() {
 
   return (
     <div className="journalPage">
-      <div className="journalHeader">
-        <button className="journalHeaderButton">⚙</button>
-        <button className="journalHeaderButton">◯</button>
-      </div>
+      {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-      <h1 className="journalTitle">Journal</h1>
+      <h1 className="journalTitle" style={{ margin: 0, lineHeight: 1, textAlign: 'center', marginTop: '6rem', marginBottom: '1rem' }}>
+        Journal
+      </h1>
 
       {!user && (
         <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
