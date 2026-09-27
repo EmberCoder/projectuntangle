@@ -10,7 +10,8 @@
 .profile-menu-wrapper + h2,
 .profile-menu-wrapper + .page-title,
 .profile-menu-wrapper + .todoTitle,
-.profile-menu-wrapper + .journalTitle {
+.profile-menu-wrapper + .journalTitle,
+.profile-menu-wrapper + .profile-settings-title {
   margin-top: 4rem;
 }
 

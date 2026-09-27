@@ -23,17 +23,23 @@ const ProfileButton = () => {
         return;
       }
 
-      const isGoogleUser = user.providerData?.some(
-        (provider) => provider.providerId === 'google.com'
-      );
+      const storedPhotoUrl = localStorage.getItem('profilePhotoUrl');
+      const activePhoto = storedPhotoUrl || user.photoURL || defaultProfileImage;
+      setPhotoUrl(activePhoto);
+    };
 
-      setPhotoUrl(isGoogleUser && user.photoURL ? user.photoURL : defaultProfileImage);
+    const handleProfilePhotoUpdated = () => {
+      updateAuthState(auth.currentUser);
     };
 
     updateAuthState(auth.currentUser);
     const unsubscribe = auth.onAuthStateChanged(updateAuthState);
+    window.addEventListener('profilePhotoUpdated', handleProfilePhotoUpdated);
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      window.removeEventListener('profilePhotoUpdated', handleProfilePhotoUpdated);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -64,7 +70,7 @@ const ProfileButton = () => {
 
       {isOpen && (
         <div className="profile-dropdown">
-          <button type="button" className="profile-dropdown-button">
+          <button type="button" className="profile-dropdown-button" onClick={() => navigate('/ProfileAndSettings')}>
             Profile & Settings
           </button>
           <button type="button" className="profile-logout-button" onClick={handleLogout}>

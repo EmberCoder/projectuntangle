@@ -1,6 +1,6 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, updateProfile } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -60,3 +60,28 @@ export const clearOnboardingStatus = (email) => {
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+
+export const getCurrentUserDisplayName = () => {
+  const currentName = auth.currentUser?.displayName?.trim();
+  if (currentName) return currentName;
+
+  const savedName = localStorage.getItem('profileDisplayName')?.trim();
+  return savedName || 'Your Name';
+};
+
+export const saveProfileDisplayName = async (user, name) => {
+  if (!user) return 'Your Name';
+
+  const safeName = name.trim() || 'Your Name';
+
+  try {
+    await updateProfile(user, { displayName: safeName });
+    await user.reload();
+    localStorage.setItem('profileDisplayName', safeName);
+    return auth.currentUser?.displayName || safeName;
+  } catch (error) {
+    console.error('Failed to update display name:', error);
+    localStorage.setItem('profileDisplayName', safeName);
+    return safeName;
+  }
+};

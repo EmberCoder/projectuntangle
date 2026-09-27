@@ -4,12 +4,15 @@ import './App.css';
 import GuestPopup from './components/GuestPopup/GuestPopup';
 import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
 import StressPopup from './components/StressQuestion/StressPopup';
 import StressQuestion from './components/StressQuestion/StressQuestion';
+import { auth, getCurrentUserDisplayName } from './firebase';
 import Journal from './journal';
 import Login from './login';
 import LogInputs from './LogInputs';
 import Onboarding from './Onboarding';
+import ProfileAndSettings from './ProfileAndSettings.jsx';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
@@ -21,9 +24,46 @@ function Home() {
   const [showQuestion, setShowQuestion] = useState(true);
   const [stressLogged, setStressLogged] = useState(false);
   const [showGuestPopup, setShowGuestPopup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
+  const [username, setUsername] = useState('Name');
 
   const location = useLocation();
-  const username = location.state?.username || "Name";
+
+  useEffect(() => {
+    const updateUsername = () => {
+      const guestMode = localStorage.getItem('guestMode') === 'true';
+      const user = auth.currentUser;
+
+      if (user && !guestMode) {
+        setUsername(user.displayName || getCurrentUserDisplayName());
+        return;
+      }
+
+      setUsername(location.state?.username || 'Guest');
+    };
+
+    updateUsername();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      const guestMode = localStorage.getItem('guestMode') === 'true';
+
+      if (user) {
+        localStorage.removeItem('guestMode');
+      }
+
+      const nextLoggedIn = Boolean(user) && !guestMode;
+      setIsLoggedIn(nextLoggedIn);
+
+      if (user && !guestMode) {
+        setUsername(user.displayName || getCurrentUserDisplayName());
+        return;
+      }
+
+      setUsername(location.state?.username || 'Guest');
+    });
+
+    return () => unsubscribe();
+  }, [location.state?.username]);
 
   useEffect(() => {
     if (username === "Guest") {
@@ -36,7 +76,8 @@ function Home() {
   return (
     <div>
       <div className="HomepageContent">
-        {username === "Guest" && <BackButton />}
+
+        {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
         <h1 className="Welcome">Welcome back {username}!</h1>
 
@@ -104,6 +145,7 @@ function App() {
         <Route path="/LogInputs" element={<LogInputs />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Onboarding" element={<Onboarding />} />
+        <Route path="/ProfileAndSettings" element={<ProfileAndSettings />} />
       </Routes>
     </Router>
   );

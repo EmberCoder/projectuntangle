@@ -12,6 +12,8 @@ const GoogleLogin = () => {
     try {
       setError('');
       const result = await signInWithPopup(auth, googleProvider);
+      localStorage.removeItem('guestMode');
+
       const user = result.user;
       const firstName = user.displayName ? user.displayName.split(' ')[0] : '';
       const userEmail = user.email?.trim().toLowerCase();
@@ -25,7 +27,7 @@ const GoogleLogin = () => {
         return;
       }
 
-      navigate('/home', { state: { username } });
+      navigate('/home');
     } catch (error) {
       console.error(error.message);
       setError(error.message);

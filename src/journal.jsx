@@ -176,9 +176,7 @@ function Journal() {
     <div className="journalPage">
       {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-      <h1 className="journalTitle" style={{ margin: 0, lineHeight: 1, textAlign: 'center', marginTop: '6rem', marginBottom: '1rem' }}>
-        Journal
-      </h1>
+      <h1 className="journalTitle">Journal</h1>
 
       {!user && (
         <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
