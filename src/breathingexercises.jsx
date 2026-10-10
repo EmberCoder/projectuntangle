@@ -117,13 +117,11 @@ function BreathingExercises() {
         </div>
       </div>
 
-      {/* PAGE CONTENT */}
       <main className="breathingContent">
         <h2 className="breathingQuestion">
           Would you like to try?
         </h2>
 
-        {/* EXERCISE CARD */}
         <section className="breathingCard">
           <h3 className="breathingExerciseName">
             {exercise.name}
@@ -133,7 +131,6 @@ function BreathingExercises() {
             {exercise.description}
           </p>
 
-          {/* ANIMATED BREATHING GUIDE */}
           <div
             className={`breathingVisual ${
               isRunning ? phase.shape : 'idle'
@@ -170,7 +167,6 @@ function BreathingExercises() {
             )}
           </div>
 
-          {/* CONTROLS */}
           <div className="breathingControls">
             {!isRunning ? (
               <button
@@ -199,7 +195,6 @@ function BreathingExercises() {
           </div>
         </section>
 
-        {/* NEW EXERCISE BUTTON */}
         <button
           className="breathingGenerateButton"
           onClick={generateNewExercise}

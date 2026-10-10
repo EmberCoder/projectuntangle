@@ -1,4 +1,4 @@
-/* MAIN PAGE */
+
 .breathingPage {
   min-height: 100vh;
   box-sizing: border-box;
@@ -8,7 +8,7 @@
   font-family: "Fredoka", sans-serif;
 }
 
-/* HEADER */
+
 .breathingHeader {
   display: flex;
   justify-content: space-between;
@@ -52,7 +52,7 @@
   font-size: 25px;
 }
 
-/* MAIN CONTENT */
+
 .breathingContent {
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@
   text-align: center;
 }
 
-/* EXERCISE CARD */
+
 .breathingCard {
   display: flex;
   flex-direction: column;
@@ -97,7 +97,7 @@
   line-height: 1.5;
 }
 
-/* ANIMATED VISUAL */
+
 .breathingVisual {
   display: flex;
   align-items: center;
@@ -193,7 +193,7 @@
   }
 }
 
-/* INSTRUCTIONS */
+
 .breathingInstructions {
   display: flex;
   flex-direction: column;
@@ -215,7 +215,6 @@
   font-size: 0.9rem;
 }
 
-/* BUTTONS */
 .breathingControls {
   display: flex;
   justify-content: center;
@@ -278,7 +277,6 @@
   text-align: center;
 }
 
-/* SMALL SCREENS */
 @media (max-width: 360px) {
   .breathingPage {
     padding-right: 12px;
@@ -296,7 +294,6 @@
   }
 }
 
-/* RESPECT REDUCED-MOTION PREFERENCES */
 @media (prefers-reduced-motion: reduce) {
   .breathingVisual .breathingShape {
     animation-duration: 0.01ms !important;
