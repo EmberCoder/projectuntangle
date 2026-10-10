@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import EmailLogin from './components/Login/EmailLogin';
 import GoogleLogin from './components/Login/GoogleLogin';
-import { auth, getOnboardingStatus, setOnboardingStatus } from './firebase';
+import { auth, setOnboardingStatus } from './firebase';
 
 const LogInputs = () => {
   const [email, setEmail] = useState('');
@@ -32,21 +32,9 @@ const LogInputs = () => {
         return;
       }
 
-      const onboardingStatus = getOnboardingStatus(trimmedEmail);
-
-      if (onboardingStatus !== 'complete') {
-        navigate('/Onboarding', {
-          state: {
-            email: trimmedEmail,
-            password: trimmedPassword,
-            username: trimmedEmail.split('@')[0],
-          },
-        });
-        return;
-      }
-
-      const result = await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
-      navigate('/home', { state: { username: result.user.email?.split('@')[0] || 'User' } });
+      await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
+      localStorage.removeItem('guestMode');
+      navigate('/home');
     } catch (error) {
       const errorCode = error?.code || '';
       const errorMessage = error?.message || '';

@@ -1,7 +1,7 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, updateProfile } from "firebase/auth";
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -60,3 +60,40 @@ export const clearOnboardingStatus = (email) => {
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+
+export const saveProfilePhoto = async (user, photoUrl) => {
+  await setDoc(doc(db, 'users', user.uid), { profilePhotoUrl: photoUrl }, { merge: true });
+  return photoUrl;
+};
+
+export const getProfilePhotoUrl = async (user) => {
+  if (!user) return null;
+
+  const profileSnapshot = await getDoc(doc(db, 'users', user.uid));
+  return profileSnapshot.exists() ? profileSnapshot.data().profilePhotoUrl || null : null;
+};
+
+export const getCurrentUserDisplayName = () => {
+  const currentName = auth.currentUser?.displayName?.trim();
+  if (currentName) return currentName;
+
+  const savedName = localStorage.getItem('profileDisplayName')?.trim();
+  return savedName || 'Your Name';
+};
+
+export const saveProfileDisplayName = async (user, name) => {
+  if (!user) return 'Your Name';
+
+  const safeName = name.trim() || 'Your Name';
+
+  try {
+    await updateProfile(user, { displayName: safeName });
+    await user.reload();
+    localStorage.setItem('profileDisplayName', safeName);
+    return auth.currentUser?.displayName || safeName;
+  } catch (error) {
+    console.error('Failed to update display name:', error);
+    localStorage.setItem('profileDisplayName', safeName);
+    return safeName;
+  }
+};

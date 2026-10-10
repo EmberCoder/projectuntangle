@@ -24,24 +24,11 @@
   color: #000;
 }
 
-
-
-.journalTitle {
-  margin: 35px 0 25px;
-  color: #995f7d;
-  font-size: 3rem;
-  font-weight: 600;
-}
-
-
-
 .journalHome {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
-
 
 .journalBook {
   width: 100%;

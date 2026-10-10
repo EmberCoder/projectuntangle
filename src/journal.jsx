@@ -1,14 +1,14 @@
 import { onAuthStateChanged } from 'firebase/auth';
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import BackButton from './components/Login/BackButton';
@@ -25,6 +25,7 @@ function Journal() {
   const [editingEntryId, setEditingEntryId] = useState(null);
   const [currentPrompt, setCurrentPrompt] = useState('');
   const [user, setUser] = useState(null);
+  const displayName = user?.displayName?.trim();
 
   const prompts = [
     'What is something that made you smile today?',
@@ -176,9 +177,7 @@ function Journal() {
     <div className="journalPage">
       {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-      <h1 className="journalTitle" style={{ margin: 0, lineHeight: 1, textAlign: 'center', marginTop: '6rem', marginBottom: '1rem' }}>
-        Journal
-      </h1>
+      <h1 className="journalTitle pageTitle">Journal</h1>
 
       {!user && (
         <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
@@ -189,7 +188,9 @@ function Journal() {
       {journalMode === null && (
         <div className="journalHome">
           <div className="journalBook">
-            <div className="journalBookTitle">Your Journal</div>
+            <div className="journalBookTitle">
+              {displayName ? `${displayName}'s Journal` : 'Your Journal'}
+            </div>
 
             <button
               className="journalOptionButton"
