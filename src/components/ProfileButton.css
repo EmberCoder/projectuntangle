@@ -36,6 +36,14 @@
   border-radius: 50%;
 }
 
+.profile-button.is-loading {
+  background-color: #ead8ca;
+}
+
+.profile-button.is-loading img {
+  visibility: hidden;
+}
+
 .profile-dropdown {
   position: absolute;
   right: 0;

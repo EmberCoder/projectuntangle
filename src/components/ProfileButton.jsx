@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, getProfilePhotoUrl } from '../firebase';
 import './ProfileButton.css';
 
 const defaultProfileImage =
@@ -10,22 +10,43 @@ const defaultProfileImage =
 const ProfileButton = () => {
   const navigate = useNavigate();
   const [photoUrl, setPhotoUrl] = useState(defaultProfileImage);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(Boolean(auth.currentUser));
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
 
   useEffect(() => {
-    const updateAuthState = (user) => {
+    const updateAuthState = async (user) => {
       const nextLoggedIn = Boolean(user);
       setIsLoggedIn(nextLoggedIn);
 
       if (!nextLoggedIn) {
         setPhotoUrl(defaultProfileImage);
+        setIsPhotoLoading(false);
         return;
       }
 
       const storedPhotoUrl = localStorage.getItem('profilePhotoUrl');
-      const activePhoto = storedPhotoUrl || user.photoURL || defaultProfileImage;
-      setPhotoUrl(activePhoto);
+      const hasPendingPhoto = localStorage.getItem(`profilePhotoPendingSync:${user.uid}`) === 'true';
+      if (hasPendingPhoto && storedPhotoUrl) {
+        setPhotoUrl(storedPhotoUrl);
+        setIsPhotoLoading(false);
+        return;
+      }
+
+      setIsPhotoLoading(true);
+      try {
+        const cloudPhotoUrl = await getProfilePhotoUrl(user);
+        if (auth.currentUser?.uid === user.uid) {
+          setPhotoUrl(cloudPhotoUrl || storedPhotoUrl || user.photoURL || defaultProfileImage);
+        }
+      } catch (error) {
+        console.error('Failed to load profile photo:', error);
+        if (auth.currentUser?.uid === user.uid) {
+          setPhotoUrl(storedPhotoUrl || user.photoURL || defaultProfileImage);
+        }
+      } finally {
+        if (auth.currentUser?.uid === user.uid) setIsPhotoLoading(false);
+      }
     };
 
     const handleProfilePhotoUpdated = () => {
@@ -62,7 +83,7 @@ const ProfileButton = () => {
       <button
         type="button"
         aria-label="Profile"
-        className="profile-button"
+        className={`profile-button${isPhotoLoading ? ' is-loading' : ''}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <img src={photoUrl} alt="Profile" />

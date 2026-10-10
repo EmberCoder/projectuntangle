@@ -79,7 +79,7 @@ function Home() {
 
         {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-        <h1 className="Welcome">Welcome back {username}!</h1>
+        <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
