@@ -317,9 +317,10 @@ function Todo() {
 
   return (
     <div>
-      {isLoggedIn ? <ProfileButton /> : <BackButton />}
-
-      <h1 className="todoTitle pageTitle">To-Do List</h1>
+      <div className="pageHeaderBar">
+        {isLoggedIn ? <ProfileButton /> : <BackButton />}
+        <h1 className="todoTitle pageTitle">To-Do List</h1>
+      </div>
 
       {tasks.length === 0 ? (
         <div className="emptyState">

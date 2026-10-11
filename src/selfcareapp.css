@@ -50,10 +50,10 @@ h1 {
 }
 
 .SelfCareHeader {
-  font-size: 3rem;
+  font-size: clamp(2.8rem, 4vw, 4rem);
   color: rgb(133, 86, 60);
   margin-left: 0;
-  margin-top: 4.5rem;
+  margin-top: 0;
   margin-bottom: 0.5rem;
 }
 
