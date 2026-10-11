@@ -16,7 +16,6 @@ import ProfileAndSettings from './ProfileAndSettings.jsx';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
-import Calendar from './calendar';
 
 
 function Home() {
@@ -143,7 +142,6 @@ function App() {
         <Route path="/todo" element={<Todo />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/selfcare" element={<SelfCare />} />
-        <Route path="/calendar" element={<Calendar />} />
         <Route path="/LogInputs" element={<LogInputs />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Onboarding" element={<Onboarding />} />
