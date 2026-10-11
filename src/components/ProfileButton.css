@@ -1,9 +1,20 @@
 .profile-menu-wrapper {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
+  position: relative;
   display: inline-block;
-  z-index: 1000;
+  z-index: 1;
+  margin-left: auto;
+}
+
+.pageHeaderBar .profile-menu-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-block;
+  width: auto;
+  margin-left: auto;
+}
+
+.profile-menu-wrapper .profile-button {
+  display: inline-flex;
 }
 
 .profile-menu-wrapper + h1,
@@ -12,7 +23,7 @@
 .profile-menu-wrapper + .todoTitle,
 .profile-menu-wrapper + .journalTitle,
 .profile-menu-wrapper + .profile-settings-title {
-  margin-top: 4rem;
+  margin-top: 0;
 }
 
 .profile-button {
@@ -48,6 +59,7 @@
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
+  left: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

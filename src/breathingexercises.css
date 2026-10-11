@@ -1,0 +1,325 @@
+
+.breathingPage {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 0 20px 115px;
+  background-color: #fff2e5;
+  color: #3a3a32;
+  font-family: "Fredoka", sans-serif;
+}
+
+.breathingHeaderBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1rem 1rem 0.5rem;
+  background: rgba(255, 242, 229, 0.96);
+  backdrop-filter: blur(4px);
+  border-bottom: none;
+}
+
+.breathingHeaderBar .profile-menu-wrapper,
+.breathingHeaderBar .backButton {
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.breathingTitle {
+  margin: 0;
+  color: #995f7d;
+  font-weight: 600;
+}
+
+.breathingHeaderBar .pageTitle {
+  margin: 0;
+  text-align: left;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  line-height: 1.1;
+}
+
+.breathingHeaderButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.breathingHeaderButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #3a3a32;
+  font-size: 29px;
+  cursor: pointer;
+}
+
+.profileButton {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #3a3a32;
+  border-radius: 50%;
+  font-size: 25px;
+}
+
+
+.breathingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.breathingQuestion {
+  margin: 18px 0 28px;
+  color: #995f7d;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.breathingCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 390px;
+  box-sizing: border-box;
+  padding: 22px 18px;
+  border-radius: 22px;
+  background-color: #fffaf5;
+  box-shadow: 0 3px 8px rgba(58, 58, 50, 0.08);
+}
+
+.breathingExerciseName {
+  margin: 0;
+  color: #85563c;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.breathingDescription {
+  margin: 8px 0 16px;
+  color: #6b6259;
+  font-size: 0.9rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+
+.breathingVisual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 210px;
+  height: 210px;
+  margin: 5px 0;
+  border-radius: 50%;
+  background-color: #f8e6ef;
+}
+
+.breathingShape {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  background-color: #dca8c4;
+  box-shadow: 0 4px 14px rgba(153, 95, 125, 0.18);
+  transform: scale(0.75);
+}
+
+.breathingShape .breathingCountdown {
+  color: #fffaf5;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.breathingVisual.idle .breathingShape {
+  animation: gentlePulse 3s ease-in-out infinite alternate;
+}
+
+.breathingVisual.inhale .breathingShape {
+  animation: breatheIn 4s ease-in-out forwards;
+}
+
+.breathingVisual.hold .breathingShape {
+  transform: scale(1.2);
+  animation: holdBreath 4s linear forwards;
+}
+
+.breathingVisual.exhale .breathingShape {
+  animation: breatheOut 6s ease-in-out forwards;
+}
+
+.breathingVisual.rest .breathingShape {
+  transform: scale(0.75);
+  animation: holdRest 4s linear forwards;
+}
+
+@keyframes gentlePulse {
+  from {
+    transform: scale(0.75);
+  }
+
+  to {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes breatheIn {
+  from {
+    transform: scale(0.75);
+  }
+
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes holdBreath {
+  from,
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes breatheOut {
+  from {
+    transform: scale(1.2);
+  }
+
+  to {
+    transform: scale(0.75);
+  }
+}
+
+@keyframes holdRest {
+  from,
+  to {
+    transform: scale(0.75);
+  }
+}
+
+
+.breathingInstructions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.breathingPhase {
+  color: #995f7d;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.breathingSeconds {
+  color: #85563c;
+  font-size: 0.9rem;
+}
+
+.breathingControls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.breathingMainButton,
+.breathingSecondaryButton,
+.breathingGenerateButton {
+  border: none;
+  border-radius: 22px;
+  font-family: "Fredoka", sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.breathingMainButton {
+  min-width: 100px;
+  padding: 10px 22px;
+  background-color: #995f7d;
+  color: #fff2e5;
+  font-size: 1rem;
+}
+
+.breathingSecondaryButton {
+  padding: 10px 22px;
+  background-color: #e7b5d1;
+  color: #85563c;
+  font-size: 1rem;
+}
+
+.breathingGenerateButton {
+  margin-top: 24px;
+  padding: 10px 20px;
+  background-color: #e7b5d1;
+  color: #85563c;
+  font-size: 0.9rem;
+}
+
+.breathingMainButton:hover,
+.breathingSecondaryButton:hover,
+.breathingGenerateButton:hover {
+  opacity: 0.85;
+}
+
+.breathingMainButton:active,
+.breathingSecondaryButton:active,
+.breathingGenerateButton:active {
+  transform: scale(0.97);
+}
+
+.breathingHint {
+  max-width: 300px;
+  margin: 16px 0 0;
+  color: #6b6259;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 360px) {
+  .breathingPage {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .breathingVisual {
+    width: 185px;
+    height: 185px;
+  }
+
+  .breathingShape {
+    width: 105px;
+    height: 105px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathingVisual .breathingShape {
+    animation-duration: 0.01ms !important;
+  }
+
+  .breathingMainButton,
+  .breathingSecondaryButton,
+  .breathingGenerateButton {
+    transition: none;
+  }
+}

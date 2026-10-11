@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
+import Breathing from './breathingexercises';
 import GuestPopup from './components/GuestPopup/GuestPopup';
 import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
@@ -17,9 +18,8 @@ import SelfCare from './selfcare';
 import SignUp from './SignUp';
 import Todo from './todo';
 
-
 function Home() {
-  const [scale, setScale] = useState("");
+  const [scale, setScale] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [showQuestion, setShowQuestion] = useState(true);
   const [stressLogged, setStressLogged] = useState(false);
@@ -66,20 +66,22 @@ function Home() {
   }, [location.state?.username]);
 
   useEffect(() => {
-    if (username === "Guest") {
-      setTimeout(() => {
+    if (username === 'Guest') {
+      const timer = setTimeout(() => {
         setShowGuestPopup(true);
       }, 1000);
+
+      return () => clearTimeout(timer);
     }
   }, [username]);
 
   return (
     <div>
       <div className="HomepageContent">
-
-        {isLoggedIn ? <ProfileButton /> : <BackButton />}
-
-        <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
+        <div className="pageHeaderBar">
+          {isLoggedIn ? <ProfileButton /> : <BackButton />}
+          <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
+        </div>
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
@@ -96,10 +98,10 @@ function Home() {
         )}
 
         {showPopup && (
-          <StressPopup 
-            scale={scale} 
-            setShowPopup={setShowPopup} 
-            setShowQuestion={setShowQuestion} 
+          <StressPopup
+            scale={scale}
+            setShowPopup={setShowPopup}
+            setShowQuestion={setShowQuestion}
           />
         )}
 
@@ -110,8 +112,8 @@ function Home() {
         )}
 
         <div style={{ margin: '1rem' }}>
-          <Link 
-            to="/selfcare" 
+          <Link
+            to="/selfcare"
             style={{
               backgroundColor: 'rgb(133, 86, 60)',
               color: '#ffffff',
@@ -120,7 +122,7 @@ function Home() {
               textDecoration: 'none',
               fontWeight: '600',
               fontFamily: 'Fredoka, sans-serif',
-              display: 'inline-block'
+              display: 'inline-block',
             }}
           >
             Go to Self Care Zone →
@@ -142,6 +144,7 @@ function App() {
         <Route path="/todo" element={<Todo />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/selfcare" element={<SelfCare />} />
+        <Route path="/breathingexercises" element={<Breathing />} />
         <Route path="/LogInputs" element={<LogInputs />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Onboarding" element={<Onboarding />} />
