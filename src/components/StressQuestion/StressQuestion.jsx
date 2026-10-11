@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ExitButton from '../ExitButton';
 import './StressQuestion.css';
 
-const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQuestion, setStressLogged}) => {
+const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, setStressLogged, onStressSubmit}) => {
     const [errorMessage, setErrorMessage] = useState(false);
     const onOptionChange = (e) => {
         setScale(e.target.value);
@@ -13,6 +13,8 @@ const StressQuestion = ({setScale, setShowPopup, scale, setShowQuestion, showQue
             setErrorMessage(true); 
             return;
         }
+
+        onStressSubmit?.(scale);
         
         if (Number(scale) >= 3) {
             setShowPopup(true);

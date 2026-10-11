@@ -1,7 +1,9 @@
+import { House } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Breathing from './breathingexercises';
+import Calendar from './calendar';
 import GuestPopup from './components/GuestPopup/GuestPopup';
 import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
@@ -16,6 +18,7 @@ import Onboarding from './Onboarding';
 import ProfileAndSettings from './ProfileAndSettings.jsx';
 import SelfCare from './selfcare';
 import SignUp from './SignUp';
+import { getLocalDateKey, saveStressLog } from './stressLogs';
 import Todo from './todo';
 
 function Home() {
@@ -28,6 +31,10 @@ function Home() {
   const [username, setUsername] = useState('Name');
 
   const location = useLocation();
+
+  const handleStressSubmit = (submittedScale) => {
+    saveStressLog(getLocalDateKey(), submittedScale);
+  };
 
   useEffect(() => {
     const updateUsername = () => {
@@ -94,6 +101,7 @@ function Home() {
             setShowPopup={setShowPopup}
             setShowQuestion={setShowQuestion}
             setStressLogged={setStressLogged}
+            onStressSubmit={handleStressSubmit}
           />
         )}
 
@@ -103,6 +111,19 @@ function Home() {
             setShowPopup={setShowPopup}
             setShowQuestion={setShowQuestion}
           />
+        )}
+
+        {!showQuestion && !showPopup && (
+          <button
+            type="button"
+            className="StressLogAgainButton"
+            onClick={() => {
+              setScale('');
+              setShowQuestion(true);
+            }}
+          >
+            Log stress again
+          </button>
         )}
 
         {stressLogged && (
@@ -135,13 +156,28 @@ function Home() {
   );
 }
 
+function HomeButton() {
+  const { pathname } = useLocation();
+  const excludedPaths = ['/', '/LogInputs', '/SignUp', '/Onboarding'];
+
+  if (excludedPaths.includes(pathname)) return null;
+
+  return (
+    <Link className="AppHomeButton" to="/home" aria-label="Go to homepage" title="Home">
+      <House size={20} aria-hidden="true" />
+    </Link>
+  );
+}
+
 function App() {
   return (
     <Router>
+      <HomeButton />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/todo" element={<Todo />} />
+        <Route path="/calendar" element={<Calendar />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/selfcare" element={<SelfCare />} />
         <Route path="/breathingexercises" element={<Breathing />} />
