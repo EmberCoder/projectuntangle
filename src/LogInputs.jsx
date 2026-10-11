@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import EmailLogin from './components/Login/EmailLogin';
 import GoogleLogin from './components/Login/GoogleLogin';
-import { auth, setOnboardingStatus } from './firebase';
+import { auth, authPersistenceReady, setOnboardingStatus } from './firebase';
 
 const LogInputs = () => {
   const [email, setEmail] = useState('');
@@ -32,6 +32,7 @@ const LogInputs = () => {
         return;
       }
 
+      await authPersistenceReady;
       await signInWithEmailAndPassword(auth, trimmedEmail, trimmedPassword);
       localStorage.removeItem('guestMode');
       navigate('/home');

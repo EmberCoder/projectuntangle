@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import './components/Login/Login.css';
-import { auth, db, setOnboardingStatus } from './firebase';
+import { auth, authPersistenceReady, db, setOnboardingStatus } from './firebase';
 
 const goalOptions = [
   'Daily Productivity',
@@ -66,6 +66,7 @@ const Onboarding = () => {
       const finalEmail = pendingEmail || location.state?.email || auth.currentUser?.email || '';
 
       if (pendingEmail && pendingPassword) {
+        await authPersistenceReady;
         const result = await createUserWithEmailAndPassword(auth, pendingEmail, pendingPassword);
         await updateProfile(result.user, { displayName: trimmedName });
       }
