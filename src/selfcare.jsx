@@ -44,9 +44,10 @@ export default function SelfCare() {
 
   return (
     <div className="SelfCarePage">
-      {isLoggedIn ? <ProfileButton /> : <BackButton />}
-
-      <h1 className="SelfCareHeader pageTitle">Self Care Zone</h1>
+      <div className="pageHeaderBar">
+        {isLoggedIn ? <ProfileButton /> : <BackButton />}
+        <h1 className="SelfCareHeader pageTitle">Self Care Zone</h1>
+      </div>
       <p className="SelfCareSubheading">
         Want to check out mental health events near you?
       </p>
