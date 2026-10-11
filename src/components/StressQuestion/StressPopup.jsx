@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import ExitButton from '../ExitButton';
 import './StressPopup.css';
 
@@ -12,7 +13,7 @@ const StressPopup = ({ scale, setShowPopup, setShowQuestion }) => {
             <h2>You rated your stress a {scale}/5. Would you like to try...</h2>
             <ExitButton onClick={() => setShowPopup(false)} />
             <button className="OptionButtons">A Breathing Exercise</button> <br />
-            <button className="OptionButtons">Journaling</button> <br />
+            <Link className="OptionButtons" to="/journal">Journaling</Link> <br />
             <button className="OptionButtons">A Grounding Exercise</button>
         </div>
     );

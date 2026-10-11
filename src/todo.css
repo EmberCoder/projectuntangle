@@ -1,0 +1,348 @@
+
+.task {
+  margin-bottom: 25px;
+}
+
+.taskCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #8b5a5a;
+  padding: 15px 18px;
+  border-radius: 15px;
+}
+
+.taskCard > input[type="checkbox"] {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.taskName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff2e5;
+  margin-bottom: 5px;
+}
+
+.taskDueDate,
+.taskDescription {
+  font-size: 0.8rem;
+  color: #f5dfe7;
+}
+
+.taskDueDate {
+  margin-bottom: 3px;
+}
+
+.taskActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.taskActions button {
+  border: none;
+  border-radius: 15px;
+  padding: 6px 15px;
+  background-color: #e7b5d1;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+  cursor: pointer;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+.emptyState input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+}
+
+.emptyState button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 25px;
+  background-color: #e7b5d1;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.emptyState button:hover {
+  opacity: 0.85;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 15px;
+  background-color: #8b5a5a;
+  border-radius: 15px;
+  padding: 15px 20px;
+}
+
+.editForm input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+}
+
+.editForm button {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  background-color: #e7b5d1;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.editForm button:hover {
+  opacity: 0.85;
+}
+
+html,
+body {
+  min-height: 100%;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.stage {
+  min-height: 100vh;
+  height: auto;
+  padding-bottom: 120px;
+}
+
+
+.addAnotherButton {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto 0;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 20px;
+  background-color: #995f7d;
+  color: #fff2e5;
+  font-family: "Fredoka", sans-serif;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.addAnotherButton:hover {
+  opacity: 0.85;
+}
+
+
+.aiActions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 30px 0 40px 0;
+  padding: 10px;
+}
+
+.aiActions button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  background-color: #995f7d;
+  color: white;
+  font-family: "Fredoka", sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.aiActions button:hover {
+  opacity: 0.85;
+}
+
+.aiActions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.subtasksResults {
+  width: 100%;
+  max-width: 500px;
+  margin: 25px auto 40px;
+  padding: 20px;
+  background-color: #e7b5d1;
+  border-radius: 18px;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+}
+
+.subtasksResults h2 {
+  color: #85563c;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.subtasksResults h3 {
+  color: #85563c;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.subtaskGroup {
+  margin-bottom: 20px;
+}
+
+.subtaskGroup h3 {
+  color: #85563c;
+  margin-bottom: 8px;
+}
+
+.subtaskGroup ul {
+  display: block;
+  background-color: transparent;
+  padding: 0 0 0 25px;
+  list-style-type: disc;
+  position: static;
+  width: auto;
+  height: auto;
+}
+
+.subtaskGroup li {
+  float: none;
+  margin-bottom: 6px;
+}
+
+.subtaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subtaskItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.subtaskItem input[type="checkbox"] {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+
+.scheduleResults {
+  width: 100%;
+  max-width: 500px;
+  margin: 25px auto 40px;
+  padding: 20px;
+  background-color: #e7b5d1;
+  border-radius: 18px;
+  color: #3A3A32;
+  font-family: "Fredoka", sans-serif;
+}
+
+.scheduleResults h2 {
+  color: #85563c;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scheduleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.scheduleNumber {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #995f7d;
+  color: #fff2e5;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.scheduleContent {
+  flex: 1;
+}
+
+.scheduleTask {
+  font-weight: bold;
+  color: #85563c;
+  margin-bottom: 4px;
+}
+
+.scheduleTime {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.scheduleReason {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+
+.scheduleExplanation {
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(58, 58, 50, 0.2);
+}
+
+.scheduleExplanation strong {
+  color: #85563c;
+}
+
+.scheduleExplanation p {
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.dueDateInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: "Fredoka", sans-serif;
+  font-size: 1rem;
+  background-color: #ffffff;
+  color: #3A3A32;
+
+}
