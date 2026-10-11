@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
-    "@capacitor/cli": "^8.4.3",
-    "@capacitor/core": "^8.5.0",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
     "@google/genai": "^2.18.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

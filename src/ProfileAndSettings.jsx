@@ -97,8 +97,7 @@ const ProfileAndSettings = () => {
         if (auth.currentUser?.uid === user.uid) {
           setPhotoUrl(cloudPhotoUrl || savedPhoto || user.photoURL || originalPhoto || defaultProfileImage);
         }
-      } catch (error) {
-        console.error('Failed to load profile photo:', error);
+      } catch {
         if (auth.currentUser?.uid === user.uid) {
           setPhotoUrl(savedPhoto || user.photoURL || originalPhoto || defaultProfileImage);
         }
@@ -134,13 +133,11 @@ const ProfileAndSettings = () => {
       localStorage.removeItem(pendingSyncKey);
       setPhotoUrl(savedPhotoUrl);
       window.dispatchEvent(new Event('profilePhotoUpdated'));
-    } catch (error) {
-      console.error('Failed to save profile photo:', error);
+    } catch {
       if (user) {
         localStorage.setItem(`profilePhotoPendingSync:${user.uid}`, 'true');
       }
-      const reason = error?.code || error?.message || 'unknown error';
-      setPhotoError(`Photo is saved on this device, but account sync failed (${reason}).`);
+      setPhotoError("We couldn't sync your photo right now. It's still saved on this device. Please try again later.");
       window.dispatchEvent(new Event('profilePhotoUpdated'));
     }
   };
@@ -176,10 +173,8 @@ const ProfileAndSettings = () => {
         await user.reload();
         localStorage.removeItem(pendingSyncKey);
         window.dispatchEvent(new Event('profilePhotoUpdated'));
-      } catch (error) {
-        console.error('Failed to restore original profile photo:', error);
-        const reason = error?.code || error?.message || 'unknown error';
-        setPhotoError(`Original photo is saved here, but account sync failed (${reason}).`);
+      } catch {
+        setPhotoError("We couldn't sync your original photo right now. It's still showing on this device. Please try again later.");
       }
     } else {
       localStorage.removeItem('profilePhotoUrl');
