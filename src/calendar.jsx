@@ -424,7 +424,7 @@ export default function Calendar() {
                 <form onSubmit={handleAddEvent} className="EventForm">
                   <input
                     type="text"
-                    placeholder="New Event Title..."
+                    placeholder="Beheheheheh"
                     value={eventTitle}
                     onChange={(e) => setEventTitle(e.target.value)}
                     className="EventInput"
