@@ -45,3 +45,42 @@ h1 {
 .HomepageContent {
     padding-bottom: 15vh;
 }
+
+.StressLogAgainButton {
+  margin: 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid rgb(133, 86, 60);
+  border-radius: 5px;
+  background: #fff;
+  color: rgb(133, 86, 60);
+  font: 600 0.95rem "Fredoka", sans-serif;
+  cursor: pointer;
+}
+
+.AppHomeButton {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1200;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: rgb(133, 86, 60);
+  text-decoration: none;
+  transition: background-color 140ms ease;
+}
+
+.AppHomeButton:hover {
+  background: rgba(181, 155, 127, 0.2);
+}
+
+.AppHomeButton:focus-visible {
+  outline: 2px solid rgb(133, 86, 60);
+  outline-offset: 2px;
+}

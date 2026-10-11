@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, X, Settings, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { ChevronLeft, ChevronRight, Clock, Plus, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import './Calendar.css';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
+import { auth, authPersistenceReady } from './firebase';
+import { deleteStressLog, getLocalDateKey, readStressLogs, saveStressLog } from './stressLogs';
 
 // Initial default categories
 const INITIAL_CATEGORIES = [
@@ -10,16 +14,49 @@ const INITIAL_CATEGORIES = [
   { name: 'Work', color: '#3B82F6', googleColorId: '9' },     // Blue
   { name: 'Personal', color: '#10B981', googleColorId: '2' }  // Green
 ];
+const CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.calendarEvents';
+const GOOGLE_CALENDAR_LINK_STORAGE_KEY = 'projectUntangle.googleCalendarLinkedEmail';
+const STRESS_LEVEL_LABELS = ['Very low', 'Low', 'Moderate', 'High', 'Very stressed'];
+const SYMPTOM_OPTIONS_BY_LEVEL = {
+  1: ['Calm', 'Relaxed', 'Focused', 'Tired'],
+  2: ['Mostly calm', 'Restless', 'Tired', 'Distracted'],
+  3: ['Tense', 'Overwhelmed', 'Irritable', 'Hard to focus'],
+  4: ['Anxious', 'Racing thoughts', 'Body tension', 'Overwhelmed', 'Hard to focus'],
+  5: ['Panic', 'Racing thoughts', 'Body tension', 'Unable to focus', 'Trouble sleeping'],
+};
+
+const formatStressLogTime = (loggedAt) => new Date(loggedAt).toLocaleTimeString([], {
+  hour: 'numeric',
+  minute: '2-digit',
+});
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDayDetailOpen, setIsDayDetailOpen] = useState(false);
   const [selectedGridDate, setSelectedGridDate] = useState(null);
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(() => {
+    try {
+      const savedEvents = JSON.parse(localStorage.getItem(CALENDAR_EVENTS_STORAGE_KEY) || '[]');
+      return Array.isArray(savedEvents) ? savedEvents : [];
+    } catch {
+      return [];
+    }
+  });
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
+  const [linkedGoogleEmail, setLinkedGoogleEmail] = useState(() => localStorage.getItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY));
+  const [calendarAccessToken, setCalendarAccessToken] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const [deletingEventId, setDeletingEventId] = useState(null);
+  const [stressLogs, setStressLogs] = useState(readStressLogs);
+  const [isStressQuizOpen, setIsStressQuizOpen] = useState(false);
+  const [stressLevel, setStressLevel] = useState('');
+  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
+  const [editingStressLogId, setEditingStressLogId] = useState(null);
+  const [stressSaveError, setStressSaveError] = useState('');
+  const stressLogsCarouselRef = useRef(null);
 
   // Categories state (editable/extensible)
   const [categories, setCategories] = useState(INITIAL_CATEGORIES);
@@ -37,88 +74,169 @@ export default function Calendar() {
   const [eventMinute, setEventMinute] = useState('00');
   const [eventAmPm, setEventAmPm] = useState('PM');
 
-  // Google API Client Setup
   useEffect(() => {
-    /* global gapi */
-    const loadGapi = () => {
-      if (typeof gapi !== 'undefined') {
-        gapi.load('client:auth2', initGapiClient);
-      } else {
-        setTimeout(loadGapi, 300);
-      }
-    };
-    loadGapi();
-  }, []);
+    const cachedEvents = events.map(({ id, summary, colorId, start, end, htmlLink, categoryColor, categoryName }) => ({
+      id,
+      summary,
+      colorId,
+      start,
+      end,
+      htmlLink,
+      categoryColor,
+      categoryName,
+    }));
+
+    try {
+      localStorage.setItem(CALENDAR_EVENTS_STORAGE_KEY, JSON.stringify(cachedEvents));
+    } catch (error) {
+      console.error('Could not cache calendar events:', error);
+    }
+  }, [events]);
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (calendarAccessToken) {
       fetchGoogleEvents();
     }
-  }, [currentDate, isSignedIn]);
+  }, [currentDate, calendarAccessToken]);
 
-  const initGapiClient = async () => {
+  const handleAuthClick = async () => {
+    setIsAuthModalOpen(false);
+    setAuthError('');
+
     try {
-      await gapi.client.init({
-        apiKey: 'AIzaSyAweTv9HK6OqncBM5kg3OkMJFJ0f3gOLl8',
-        clientId: '167839438143-oqi3l734kls7ptmtitp0rur85ur84a2j.apps.googleusercontent.com',
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/calendar.events',
-      });
-
-      const authInstance = gapi.auth2.getAuthInstance();
-      const signedIn = authInstance.isSignedIn.get();
-      setIsSignedIn(signedIn);
-
-      if (signedIn) {
-        const currentUser = authInstance.currentUser.get();
-        setUserEmail(currentUser.getBasicProfile().getEmail());
-        fetchGoogleEvents();
-      }
-
-      authInstance.isSignedIn.listen((val) => {
-        setIsSignedIn(val);
-        if (val) {
-          const currentUser = authInstance.currentUser.get();
-          setUserEmail(currentUser.getBasicProfile().getEmail());
-          fetchGoogleEvents();
-        } else {
-          setUserEmail(null);
-        }
-      });
-    } catch (err) {
-      console.error('Error initializing Google API Client', err);
-    }
-  };
-
-  const handleAuthClick = () => {
-    if (!userEmail && !isSignedIn) {
-      setIsAuthModalOpen(true);
-      return;
-    }
-
-    /* global gapi */
-    if (typeof gapi !== 'undefined' && gapi.auth2) {
-      const authInstance = gapi.auth2.getAuthInstance();
       if (isSignedIn) {
-        authInstance.signOut();
+        setCalendarAccessToken(null);
+        setIsSignedIn(false);
+        setUserEmail(null);
+        setLinkedGoogleEmail(null);
+        localStorage.removeItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY);
       } else {
-        authInstance.signIn();
+        await authPersistenceReady;
+        const calendarProvider = new GoogleAuthProvider();
+        calendarProvider.addScope('https://www.googleapis.com/auth/calendar.events');
+        calendarProvider.setCustomParameters({ prompt: 'select_account' });
+        const result = await signInWithPopup(auth, calendarProvider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+
+        if (!credential?.accessToken) {
+          throw new Error('Google did not provide Calendar access. Please try connecting again.');
+        }
+
+        setCalendarAccessToken(credential.accessToken);
+        setUserEmail(result.user.email || null);
+        setLinkedGoogleEmail(result.user.email || null);
+        if (result.user.email) {
+          localStorage.setItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY, result.user.email);
+        }
+        setIsSignedIn(true);
       }
+    } catch (error) {
+      console.error('Google Calendar sign-in failed:', error);
+      setAuthError(error.message || 'Google could not authorize this calendar connection.');
+      setIsAuthModalOpen(true);
     }
   };
 
   const fetchGoogleEvents = async () => {
+    if (!calendarAccessToken) {
+      return;
+    }
+
     try {
-      const response = await gapi.client.calendar.events.list({
-        calendarId: 'primary',
-        timeMin: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString(),
-        timeMax: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString(),
-        showDeleted: false,
-        singleEvents: true,
+      const timeMin = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString();
+      const timeMax = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1).toISOString();
+      const queryParams = {
+        timeMin,
+        timeMax,
+        showDeleted: 'false',
+        singleEvents: 'true',
+        orderBy: 'startTime',
+        maxResults: '2500',
+        fields: 'items(id,summary,colorId,start,end,htmlLink),nextPageToken',
+      };
+      const syncedEvents = [];
+      let pageToken;
+
+      do {
+        const query = new URLSearchParams(queryParams);
+        if (pageToken) query.set('pageToken', pageToken);
+
+        const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${query}`, {
+          headers: { Authorization: `Bearer ${calendarAccessToken}` },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error?.message || 'Could not load Google Calendar events.');
+        }
+
+        syncedEvents.push(...(data.items || []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+
+      setEvents((previousEvents) => {
+        const eventsById = new Map(previousEvents.map((event) => [event.id, event]));
+        syncedEvents.forEach((event) => eventsById.set(event.id, event));
+        return Array.from(eventsById.values());
       });
-      setEvents(response.result.items || []);
     } catch (err) {
       console.error('Error fetching events', err);
+      setAuthError(err.message || 'Could not load Google Calendar events.');
+      setIsAuthModalOpen(true);
+    }
+  };
+
+  const handleDeleteEvent = async (event) => {
+    setDeletingEventId(event.id);
+
+    try {
+      let accessToken = calendarAccessToken;
+      let signedInUserEmail = userEmail;
+
+      if (event.htmlLink && !accessToken) {
+        await authPersistenceReady;
+        const calendarProvider = new GoogleAuthProvider();
+        calendarProvider.addScope('https://www.googleapis.com/auth/calendar.events');
+        calendarProvider.setCustomParameters({ prompt: 'select_account' });
+        const result = await signInWithPopup(auth, calendarProvider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        accessToken = credential?.accessToken;
+        signedInUserEmail = result.user.email || null;
+
+        if (!accessToken) {
+          throw new Error('Google did not provide Calendar access. Please try deleting the event again.');
+        }
+      }
+
+      if (event.htmlLink) {
+        const response = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(event.id)}`,
+          {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+        if (!response.ok && response.status !== 404) {
+          const data = await response.json();
+          throw new Error(data.error?.message || 'Could not delete the event from Google Calendar.');
+        }
+      }
+
+      if (event.htmlLink && !calendarAccessToken) {
+        setCalendarAccessToken(accessToken);
+        setUserEmail(signedInUserEmail);
+        setLinkedGoogleEmail(signedInUserEmail);
+        if (signedInUserEmail) {
+          localStorage.setItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY, signedInUserEmail);
+        }
+        setIsSignedIn(true);
+      }
+      setEvents((previousEvents) => previousEvents.filter((item) => item.id !== event.id));
+    } catch (error) {
+      console.error('Error deleting calendar event', error);
+      setAuthError(error.message || 'Could not delete this event.');
+      setIsAuthModalOpen(true);
+    } finally {
+      setDeletingEventId(null);
     }
   };
 
@@ -146,28 +264,43 @@ export default function Calendar() {
     if (eventAmPm === 'PM' && hours < 12) hours += 12;
     if (eventAmPm === 'AM' && hours === 12) hours = 0;
 
-    const formattedHour = String(hours).padStart(2, '0');
-    const startDateTime = `${eventDate}T${formattedHour}:${eventMinute}:00`;
-    
-    const endHourNum = (hours + 1) % 24;
-    const endDateTime = `${eventDate}T${String(endHourNum).padStart(2, '0')}:${eventMinute}:00`;
+    const [year, month, day] = eventDate.split('-').map(Number);
+    const start = new Date(year, month - 1, day, hours, Number(eventMinute));
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const toLocalDateTime = (date) => {
+      const datePart = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+      const timePart = [String(date.getHours()).padStart(2, '0'), String(date.getMinutes()).padStart(2, '0')].join(':');
+      return `${datePart}T${timePart}:00`;
+    };
 
     const newEvent = {
       summary: `${eventTitle} [${selectedCategory.name}]`,
       colorId: selectedCategory.googleColorId,
-      start: { dateTime: startDateTime },
-      end: { dateTime: endDateTime },
+      start: { dateTime: toLocalDateTime(start), timeZone },
+      end: { dateTime: toLocalDateTime(end), timeZone },
     };
 
-    if (isSignedIn) {
+    if (isSignedIn && calendarAccessToken) {
       try {
-        await gapi.client.calendar.events.insert({
-          calendarId: 'primary',
-          resource: newEvent,
+        const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${calendarAccessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newEvent),
         });
-        fetchGoogleEvents();
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error?.message || 'Could not add the event to Google Calendar.');
+        }
+        await fetchGoogleEvents();
       } catch (err) {
         console.error('Error creating event on Google Calendar', err);
+        setAuthError(err.message || 'Could not add the event to Google Calendar.');
+        setIsAuthModalOpen(true);
+        return;
       }
     } else {
       setEvents((prev) => [
@@ -204,22 +337,69 @@ export default function Calendar() {
     const evDate = ev.start?.date || ev.start?.dateTime?.split('T')[0];
     return evDate === selectedGridDate;
   }) : [];
+  const selectedDayStressLogs = selectedGridDate ? stressLogs[selectedGridDate] || [] : [];
+
+  const openStressQuiz = (logToEdit = null) => {
+    setStressLevel(logToEdit ? String(logToEdit.scale) : '');
+    setSelectedSymptoms(logToEdit?.symptoms || []);
+    setEditingStressLogId(logToEdit?.id || null);
+    setStressSaveError('');
+    setIsStressQuizOpen(true);
+  };
+
+  const handleSaveStressLog = () => {
+    if (!selectedGridDate || !stressLevel) {
+      setStressSaveError('Choose a stress level before saving.');
+      return;
+    }
+
+    try {
+      setStressLogs(saveStressLog(selectedGridDate, stressLevel, selectedSymptoms, editingStressLogId));
+      setIsStressQuizOpen(false);
+    } catch (error) {
+      console.error('Could not save stress check-in:', error);
+      setStressSaveError(`Could not save check-in: ${error.message || 'browser storage is unavailable.'}`);
+    }
+  };
+
+  const handleDeleteStressLog = () => {
+    if (!selectedGridDate || !editingStressLogId) return;
+
+    try {
+      setStressLogs(deleteStressLog(selectedGridDate, editingStressLogId));
+      setIsStressQuizOpen(false);
+    } catch (error) {
+      console.error('Could not delete stress check-in:', error);
+      setStressSaveError(`Could not delete check-in: ${error.message || 'browser storage is unavailable.'}`);
+    }
+  };
+
+  const scrollStressLogs = (direction) => {
+    const carousel = stressLogsCarouselRef.current;
+    if (carousel) {
+      carousel.scrollBy({ left: direction * carousel.clientWidth, behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
       <div className="CalendarPage">
         {/* Header */}
         <header className="CalendarHeader">
-          <h1 className="CalendarTitle">Calendar</h1>
-          <button className="IconButton" aria-label="Settings">
-            <Settings size={26} color="rgb(133, 86, 60)" />
-          </button>
+          <div className="pageHeaderBar">
+            <ProfileButton />
+            <h1 className="CalendarTitle pageTitle">Calendar</h1>
+          </div>
         </header>
 
         {/* Google Sign-In Status Banner */}
         <div className="AuthBar">
           <button className="AuthButton" onClick={handleAuthClick}>
-            {isSignedIn ? `Disconnect Google (${userEmail})` : 'Sync Google Calendar'}
+            {isSignedIn
+              ? `Disconnect Google (${userEmail})`
+              : linkedGoogleEmail
+                ? `Sync Google Calendar (${linkedGoogleEmail})`
+                : 'Sync Google Calendar'}
           </button>
         </div>
 
@@ -252,13 +432,14 @@ export default function Calendar() {
               });
 
               const isSelected = selectedGridDate === dateStr;
+              const isToday = dateStr === getLocalDateKey();
 
               return (
                 <div 
                   key={index} 
-                  className={`CalendarCell ${isSelected ? 'SelectedCell' : ''}`}
+                  className={`CalendarCell ${isSelected ? 'SelectedCell' : ''} ${isToday ? 'TodayCell' : ''}`}
                   style={{
-                    border: isSelected ? '2px solid rgb(133, 86, 60)' : undefined,
+                    border: isToday ? '2px solid rgb(133, 86, 60)' : undefined,
                     overflow: 'hidden',
                     position: 'relative'
                   }}
@@ -270,7 +451,7 @@ export default function Calendar() {
                   }}
                 >
                   {day && <span className="DayNumber">{day}</span>}
-                  
+
                   <div className="CellEventsList" style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px', maxHeight: '42px', overflow: 'hidden' }}>
                     {dayEvents.map((ev, evIdx) => {
                       const matchedCat = categories.find(c => c.googleColorId === ev.colorId) || categories[2];
@@ -325,10 +506,12 @@ export default function Calendar() {
               </button>
 
               <div className="ModalBody">
-                <h3 style={{ marginBottom: '12px', fontSize: '16px', color: '#333' }}>
-                  Events for {selectedGridDate}
+                <h3 style={{ marginBottom: '4px', fontSize: '16px', color: '#333' }}>
+                  {selectedGridDate}
                 </h3>
 
+                <section className="DayCategorySection" aria-labelledby="events-heading">
+                  <h4 id="events-heading">Events</h4>
                 {selectedDayEvents.length === 0 ? (
                   <p style={{ fontSize: '13px', color: '#777', marginBottom: '15px' }}>No events scheduled for this day.</p>
                 ) : (
@@ -351,7 +534,7 @@ export default function Calendar() {
 
                       return (
                         <div 
-                          key={idx} 
+                          key={ev.id || idx} 
                           style={{ 
                             backgroundColor: '#f9f9f9', 
                             borderLeft: `4px solid ${bgColor}`, 
@@ -372,14 +555,27 @@ export default function Calendar() {
                               </span>
                             )}
                           </div>
-                          <span style={{ fontSize: '10px', backgroundColor: bgColor, color: '#fff', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
-                            {matchedCat.name}
-                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                            <span style={{ fontSize: '10px', backgroundColor: bgColor, color: '#fff', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                              {matchedCat.name}
+                            </span>
+                            <button
+                              type="button"
+                              className="EventDeleteButton"
+                              aria-label={`Delete ${ev.summary || 'event'}`}
+                              title={ev.htmlLink ? 'Delete from Google Calendar and app' : 'Delete from app'}
+                              disabled={deletingEventId === ev.id}
+                              onClick={() => handleDeleteEvent(ev)}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 )}
+                </section>
 
                 <button 
                   className="ActionButtonPrimary" 
@@ -392,6 +588,45 @@ export default function Calendar() {
                   Add Event to this Day
                 </button>
 
+                {selectedDayStressLogs.length > 0 && (
+                  <section className="DayCategorySection" aria-labelledby="symptoms-heading">
+                    <div className="StressSectionHeader">
+                      <h4 id="symptoms-heading">Symptoms</h4>
+                      {selectedDayStressLogs.length > 1 && (
+                        <div className="StressCarouselControls">
+                          <button type="button" aria-label="Previous stress check-in" onClick={() => scrollStressLogs(-1)}>
+                            <ChevronLeft size={17} />
+                          </button>
+                          <button type="button" aria-label="Next stress check-in" onClick={() => scrollStressLogs(1)}>
+                            <ChevronRight size={17} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className="StressLogList"
+                      ref={stressLogsCarouselRef}
+                      role="region"
+                      aria-roledescription="carousel"
+                      aria-label="Daily stress check-ins"
+                      tabIndex={0}
+                    >
+                      {[...selectedDayStressLogs].reverse().map((log) => (
+                        <div className="SymptomEntry" key={log.id}>
+                          <div className="StressLogDetails">
+                            <strong>{log.scale === 5 ? 'Very stressed' : `${STRESS_LEVEL_LABELS[log.scale - 1]} stress`} · {log.scale}/5</strong>
+                            <span>{formatStressLogTime(log.loggedAt)}</span>
+                            {log.symptoms?.length > 0 && <span>{log.symptoms.join(', ')}</span>}
+                          </div>
+                          <button type="button" className="StressEditButton" onClick={() => openStressQuiz(log)}>
+                            Edit
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 <hr className="Divider" />
 
                 <button 
@@ -401,12 +636,100 @@ export default function Calendar() {
                   Go to To-Do List for this day
                 </button>
 
-                <button 
-                  className="ActionButtonSecondary" 
-                  onClick={() => alert('Symptom logging coming soon!')}
-                >
-                  Log symptoms for this day
-                </button>
+                {selectedGridDate === getLocalDateKey() && (
+                  <button
+                    className="ActionButtonSecondary" 
+                    onClick={() => openStressQuiz()}
+                  >
+                    Log symptoms for today
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isStressQuizOpen && (
+          <div className="ModalOverlay StressQuizOverlay">
+            <div className="ModalContent StressQuizModal" role="dialog" aria-modal="true" aria-labelledby="stress-quiz-title">
+              <button className="CloseButton" onClick={() => setIsStressQuizOpen(false)} aria-label="Close symptom log">
+                <X size={18} color="#666" />
+              </button>
+              <div className="StressQuizContent">
+                <span className="StressQuizEyebrow">{selectedGridDate}</span>
+                <h3 id="stress-quiz-title">{editingStressLogId ? 'Edit check-in' : 'Stress check-in'}</h3>
+                <p>How did your stress feel?</p>
+
+                <fieldset className="StressLevelFieldset">
+                  <legend>Choose a level from 1 to 5</legend>
+                  <div className="StressLevelOptions">
+                    {STRESS_LEVEL_LABELS.map((label, index) => {
+                      const level = index + 1;
+                      const isSelected = Number(stressLevel) === level;
+                      return (
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`StressLevelChoice ${isSelected ? 'is-selected' : ''}`}
+                          key={level}
+                          onClick={() => {
+                            setStressLevel(String(level));
+                            setSelectedSymptoms([]);
+                            setStressSaveError('');
+                          }}
+                        >
+                          <span>{level}</span>
+                          <small>{label}</small>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+
+                {stressLevel && (
+                  <fieldset className="SymptomOptionsFieldset">
+                    <legend>What did you notice?</legend>
+                    <div className="SymptomOptions">
+                      {SYMPTOM_OPTIONS_BY_LEVEL[stressLevel].map((symptom) => (
+                        <label className="SymptomOption" key={symptom}>
+                          <input
+                            type="checkbox"
+                            checked={selectedSymptoms.includes(symptom)}
+                            onChange={(event) => setSelectedSymptoms((current) => (
+                              event.target.checked
+                                ? [...current, symptom]
+                                : current.filter((item) => item !== symptom)
+                            ))}
+                          />
+                          <span>{symptom}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
+
+                {stressSaveError && <p className="StressSaveError" role="alert">{stressSaveError}</p>}
+
+                <div className="StressQuizActions">
+                  {editingStressLogId && (
+                    <button
+                      type="button"
+                      className="StressDeleteButton"
+                      aria-label="Delete this check-in"
+                      title="Delete this check-in"
+                      onClick={handleDeleteStressLog}
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                  )}
+                  <button type="button" className="ActionButtonSecondary" onClick={() => setIsStressQuizOpen(false)}>
+                    Cancel
+                  </button>
+                  <button type="button" className="ActionButtonPrimary" disabled={!stressLevel} onClick={handleSaveStressLog}>
+                    {editingStressLogId ? 'Save changes' : 'Log check-in'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -576,18 +899,20 @@ export default function Calendar() {
         {isAuthModalOpen && (
           <div className="ModalOverlay">
             <div className="ModalContent" style={{ textAlign: 'center', padding: '20px' }}>
-              <h3>No Profile Email Connected</h3>
+              <h3>Connect Google Calendar</h3>
               <p style={{ fontSize: '13px', color: '#666', margin: '10px 0' }}>
-                Please sign in with Google through your Profile/Settings section to sync your calendar events.
+                Sign in with your Google account to sync events to your Google Calendar.
               </p>
+              {authError && (
+                <p role="alert" style={{ fontSize: '13px', color: '#a12622', margin: '10px 0' }}>
+                  {authError}
+                </p>
+              )}
               <button 
                 className="ActionButtonPrimary" 
-                onClick={() => {
-                  setIsAuthModalOpen(false);
-                  alert('Redirecting to Profile Sign-In Section...');
-                }}
+                onClick={handleAuthClick}
               >
-                Go to Sign-In Section
+                Connect Google Account
               </button>
               <button 
                 className="ActionButtonSecondary" 
