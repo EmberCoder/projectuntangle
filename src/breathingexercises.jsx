@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import './breathingexercises.css';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
+import { auth } from './firebase';
 
 const exercises = [
   {
@@ -34,6 +37,7 @@ const exercises = [
 ];
 
 function BreathingExercises() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(
@@ -41,6 +45,14 @@ function BreathingExercises() {
   );
   const [isRunning, setIsRunning] = useState(false);
   const [completedCycles, setCompletedCycles] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const exercise = exercises[exerciseIndex];
   const phase = exercise.phases[phaseIndex];
@@ -94,27 +106,9 @@ function BreathingExercises() {
 
   return (
     <div className="breathingPage">
-      {/* HEADER */}
-      <div className="breathingHeader">
-        <h1 className="breathingTitle">Breathing Exercises</h1>
-
-        <div className="breathingHeaderButtons">
-          <button
-            className="breathingHeaderButton"
-            aria-label="Settings"
-            onClick={() => alert('Settings coming soon!')}
-          >
-            ⚙
-          </button>
-
-          <button
-            className="breathingHeaderButton profileButton"
-            aria-label="Profile"
-            onClick={() => alert('Profile coming soon!')}
-          >
-            ♙
-          </button>
-        </div>
+      <div className="breathingHeaderBar">
+        {isLoggedIn ? <ProfileButton /> : <BackButton />}
+        <h1 className="breathingTitle pageTitle">Breathing Exercises</h1>
       </div>
 
       <main className="breathingContent">

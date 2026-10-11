@@ -78,9 +78,10 @@ function Home() {
   return (
     <div>
       <div className="HomepageContent">
-        {isLoggedIn ? <ProfileButton /> : <BackButton />}
-
-        <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
+        <div className="pageHeaderBar">
+          {isLoggedIn ? <ProfileButton /> : <BackButton />}
+          <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
+        </div>
 
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
