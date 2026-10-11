@@ -59,8 +59,8 @@ h1 {
 
 .AppHomeButton {
   position: fixed;
-  top: 14px;
-  left: 14px;
+  top: 1rem;
+  left: 1rem;
   z-index: 1200;
   width: 3rem;
   height: 3rem;
@@ -78,6 +78,10 @@ h1 {
 
 .AppHomeButton:hover {
   background: rgba(181, 155, 127, 0.2);
+}
+
+.AppHomeButton:visited {
+  color: rgb(133, 86, 60);
 }
 
 .AppHomeButton:focus-visible {

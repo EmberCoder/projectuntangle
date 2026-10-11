@@ -14,7 +14,8 @@ const INITIAL_CATEGORIES = [
   { name: 'Work', color: '#3B82F6', googleColorId: '9' },     // Blue
   { name: 'Personal', color: '#10B981', googleColorId: '2' }  // Green
 ];
-const CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.calendarEvents';
+const APP_CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.appCalendarEvents';
+const LEGACY_CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.calendarEvents';
 const GOOGLE_CALENDAR_LINK_STORAGE_KEY = 'projectUntangle.googleCalendarLinkedEmail';
 const STRESS_LEVEL_LABELS = ['Very low', 'Low', 'Moderate', 'High', 'Very stressed'];
 const SYMPTOM_OPTIONS_BY_LEVEL = {
@@ -30,22 +31,34 @@ const formatStressLogTime = (loggedAt) => new Date(loggedAt).toLocaleTimeString(
   minute: '2-digit',
 });
 
+const googleEventsStorageKey = (email) => `projectUntangle.googleCalendarEvents.${encodeURIComponent(email.trim().toLowerCase())}`;
+
+const readStoredEvents = (key) => {
+  try {
+    const savedEvents = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(savedEvents) ? savedEvents : [];
+  } catch {
+    return [];
+  }
+};
+
+const readAppEvents = () => {
+  const savedAppEvents = readStoredEvents(APP_CALENDAR_EVENTS_STORAGE_KEY);
+  if (savedAppEvents.length > 0) return savedAppEvents;
+
+  return readStoredEvents(LEGACY_CALENDAR_EVENTS_STORAGE_KEY).filter((event) => !event.htmlLink);
+};
+
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDayDetailOpen, setIsDayDetailOpen] = useState(false);
   const [selectedGridDate, setSelectedGridDate] = useState(null);
-  const [events, setEvents] = useState(() => {
-    try {
-      const savedEvents = JSON.parse(localStorage.getItem(CALENDAR_EVENTS_STORAGE_KEY) || '[]');
-      return Array.isArray(savedEvents) ? savedEvents : [];
-    } catch {
-      return [];
-    }
-  });
+  const [events, setEvents] = useState(readAppEvents);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
-  const [linkedGoogleEmail, setLinkedGoogleEmail] = useState(() => localStorage.getItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY));
+  const [linkedGoogleEmail, setLinkedGoogleEmail] = useState(null);
+  const [calendarEmail, setCalendarEmail] = useState(null);
   const [calendarAccessToken, setCalendarAccessToken] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -75,7 +88,7 @@ export default function Calendar() {
   const [eventAmPm, setEventAmPm] = useState('PM');
 
   useEffect(() => {
-    const cachedEvents = events.map(({ id, summary, colorId, start, end, htmlLink, categoryColor, categoryName }) => ({
+    const cachedEvents = events.map(({ id, summary, colorId, start, end, htmlLink, categoryColor, categoryName, googleAccountEmail }) => ({
       id,
       summary,
       colorId,
@@ -84,14 +97,24 @@ export default function Calendar() {
       htmlLink,
       categoryColor,
       categoryName,
+      googleAccountEmail,
     }));
 
     try {
-      localStorage.setItem(CALENDAR_EVENTS_STORAGE_KEY, JSON.stringify(cachedEvents));
+      localStorage.setItem(
+        APP_CALENDAR_EVENTS_STORAGE_KEY,
+        JSON.stringify(cachedEvents.filter((event) => !event.htmlLink))
+      );
+      if (calendarEmail) {
+        localStorage.setItem(
+          googleEventsStorageKey(calendarEmail),
+          JSON.stringify(cachedEvents.filter((event) => event.htmlLink))
+        );
+      }
     } catch (error) {
       console.error('Could not cache calendar events:', error);
     }
-  }, [events]);
+  }, [events, calendarEmail]);
 
   useEffect(() => {
     if (calendarAccessToken) {
@@ -108,8 +131,10 @@ export default function Calendar() {
         setCalendarAccessToken(null);
         setIsSignedIn(false);
         setUserEmail(null);
+        setCalendarEmail(null);
         setLinkedGoogleEmail(null);
         localStorage.removeItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY);
+        setEvents((previousEvents) => previousEvents.filter((event) => !event.htmlLink));
       } else {
         await authPersistenceReady;
         const calendarProvider = new GoogleAuthProvider();
@@ -122,12 +147,22 @@ export default function Calendar() {
           throw new Error('Google did not provide Calendar access. Please try connecting again.');
         }
 
-        setCalendarAccessToken(credential.accessToken);
-        setUserEmail(result.user.email || null);
-        setLinkedGoogleEmail(result.user.email || null);
-        if (result.user.email) {
-          localStorage.setItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY, result.user.email);
+        const connectedEmail = result.user.email?.trim().toLowerCase();
+        if (!connectedEmail) {
+          throw new Error('Google did not provide an email address for this calendar account.');
         }
+        const accountEvents = readStoredEvents(googleEventsStorageKey(connectedEmail))
+          .map((event) => ({ ...event, googleAccountEmail: connectedEmail }));
+
+        setEvents((previousEvents) => [
+          ...previousEvents.filter((event) => !event.htmlLink),
+          ...accountEvents,
+        ]);
+        setCalendarAccessToken(credential.accessToken);
+        setCalendarEmail(connectedEmail);
+        setUserEmail(connectedEmail);
+        setLinkedGoogleEmail(connectedEmail);
+        localStorage.setItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY, connectedEmail);
         setIsSignedIn(true);
       }
     } catch (error) {
@@ -169,12 +204,18 @@ export default function Calendar() {
           throw new Error(data.error?.message || 'Could not load Google Calendar events.');
         }
 
-        syncedEvents.push(...(data.items || []));
+        syncedEvents.push(...(data.items || []).map((event) => ({
+          ...event,
+          googleAccountEmail: calendarEmail,
+        })));
         pageToken = data.nextPageToken;
       } while (pageToken);
 
       setEvents((previousEvents) => {
-        const eventsById = new Map(previousEvents.map((event) => [event.id, event]));
+        const otherEvents = previousEvents.filter((event) => (
+          !event.htmlLink || event.googleAccountEmail !== calendarEmail
+        ));
+        const eventsById = new Map(otherEvents.map((event) => [event.id, event]));
         syncedEvents.forEach((event) => eventsById.set(event.id, event));
         return Array.from(eventsById.values());
       });
@@ -200,11 +241,16 @@ export default function Calendar() {
         const result = await signInWithPopup(auth, calendarProvider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
         accessToken = credential?.accessToken;
-        signedInUserEmail = result.user.email || null;
+        signedInUserEmail = result.user.email?.trim().toLowerCase() || null;
 
         if (!accessToken) {
           throw new Error('Google did not provide Calendar access. Please try deleting the event again.');
         }
+      }
+
+      if (event.htmlLink && event.googleAccountEmail &&
+          event.googleAccountEmail !== (signedInUserEmail || calendarEmail)) {
+        throw new Error('This event belongs to a different Google account. Connect that account to delete it.');
       }
 
       if (event.htmlLink) {
@@ -224,6 +270,7 @@ export default function Calendar() {
       if (event.htmlLink && !calendarAccessToken) {
         setCalendarAccessToken(accessToken);
         setUserEmail(signedInUserEmail);
+        setCalendarEmail(signedInUserEmail);
         setLinkedGoogleEmail(signedInUserEmail);
         if (signedInUserEmail) {
           localStorage.setItem(GOOGLE_CALENDAR_LINK_STORAGE_KEY, signedInUserEmail);
@@ -395,7 +442,7 @@ export default function Calendar() {
         {/* Google Sign-In Status Banner */}
         <div className="AuthBar">
           <button className="AuthButton" onClick={handleAuthClick}>
-            {isSignedIn
+                {isSignedIn
               ? `Disconnect Google (${userEmail})`
               : linkedGoogleEmail
                 ? `Sync Google Calendar (${linkedGoogleEmail})`

@@ -19,7 +19,7 @@ html, body {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 7rem 1.5rem; /* 7rem bottom padding prevents content from overlapping navbar */
+  padding: 0 1.5rem 7rem 1.5rem; /* 7rem bottom padding prevents content from overlapping navbar */
   font-family: "Fredoka", sans-serif;
   min-height: 100vh;
   box-sizing: border-box;
@@ -30,8 +30,21 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 0;
   margin-bottom: 1rem;
+}
+
+.CalendarHeader .pageHeaderBar {
+  padding-top: 4.5rem;
+}
+
+.CalendarHeader .pageHeaderBar .profile-menu-wrapper {
+  position: fixed;
+  top: 0 !important;
+  right: 1rem;
+  z-index: 1000;
+  width: auto;
+  margin: 0;
 }
 
 .CalendarTitle {
