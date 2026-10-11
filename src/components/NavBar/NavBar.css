@@ -4,11 +4,11 @@
   padding: 0;
 }
 
-li {
+.navigation li {
     float: left;
 }
 
-li a {
+.navigation li a {
     display: block;
     color: black;
     text-align: center;
@@ -16,11 +16,11 @@ li a {
     text-decoration: none;
 }
 
-li a:hover {
+.navigation li a:hover {
     background-color: white;
 }
 
-ul {
+.navigation ul {
     color: rgb(61, 56, 56);
     list-style-type: none;
     padding: clamp(0.5rem, 1.5vw, 1rem);

@@ -1,8 +1,10 @@
-import { updateProfile } from 'firebase/auth';
+import { deleteUser, updateProfile } from 'firebase/auth';
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavBar from './components/NavBar/NavBar.jsx';
 import ProfileButton from './components/ProfileButton.jsx';
-import { auth, getProfilePhotoUrl, saveProfileDisplayName, saveProfilePhoto } from './firebase';
+import { auth, clearOnboardingStatus, db, getProfilePhotoUrl, saveProfileDisplayName, saveProfilePhoto } from './firebase';
 import './ProfileAndSettings.css';
 
 const defaultProfileImage =
@@ -60,6 +62,7 @@ const preparePhotoForCloud = (photoUrl) => new Promise((resolve, reject) => {
 });
 
 const ProfileAndSettings = () => {
+  const navigate = useNavigate();
   const [photoUrl, setPhotoUrl] = useState(defaultProfileImage);
   const [isPhotoLoading, setIsPhotoLoading] = useState(true);
   const [displayName, setDisplayName] = useState('Your Name');
@@ -67,6 +70,8 @@ const ProfileAndSettings = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [photoError, setPhotoError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -188,6 +193,81 @@ const ProfileAndSettings = () => {
     setIsEditingName(false);
   };
 
+  const handleDeleteAccount = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      navigate('/', { replace: true });
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to permanently delete your account and its data?')) return;
+
+    setIsDeletingAccount(true);
+    setDeleteError('');
+
+    const profileRef = doc(db, 'users', user.uid);
+    const journalRef = collection(db, 'users', user.uid, 'journalEntries');
+    let profileData = null;
+    let journalEntries = [];
+
+    try {
+      const [profileSnapshot, journalSnapshot] = await Promise.all([
+        getDoc(profileRef),
+        getDocs(journalRef),
+      ]);
+      profileData = profileSnapshot.exists() ? profileSnapshot.data() : null;
+      journalEntries = journalSnapshot.docs.map((entry) => ({ id: entry.id, data: entry.data() }));
+
+      try {
+        await Promise.all([
+          deleteDoc(profileRef),
+          ...journalEntries.map(({ id }) => deleteDoc(doc(journalRef, id))),
+        ]);
+        await deleteUser(user);
+      } catch (error) {
+        await Promise.allSettled([
+          ...(profileData ? [setDoc(profileRef, profileData)] : []),
+          ...journalEntries.map(({ id, data }) => setDoc(doc(journalRef, id), data)),
+        ]);
+        throw error;
+      }
+
+      try {
+        const linkedGoogleEmail = localStorage.getItem('projectUntangle.googleCalendarLinkedEmail');
+        const emailsToClear = new Set([user.email, linkedGoogleEmail].filter(Boolean));
+        const localDataKeys = [
+          'guestMode',
+          'profilePhotoUrl',
+          'profileDisplayName',
+          `profilePhotoPendingSync:${user.uid}`,
+          'projectUntangle.stressLogs',
+          'projectUntangle.appCalendarEvents',
+          'projectUntangle.calendarEvents',
+          'projectUntangle.googleCalendarLinkedEmail',
+        ];
+
+        emailsToClear.forEach((email) => {
+          localDataKeys.push(`projectUntangle.googleCalendarEvents.${encodeURIComponent(email.trim().toLowerCase())}`);
+        });
+        localDataKeys.forEach((key) => localStorage.removeItem(key));
+      } catch (cleanupError) {
+        console.warn('Could not clear all local account caches:', cleanupError);
+      }
+
+      clearOnboardingStatus(user.email);
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      if (error.code === 'auth/requires-recent-login') {
+        setDeleteError('For security, please sign in again, then retry deleting your account.');
+      } else {
+        setDeleteError(error.message || 'We could not delete your account. Please try again.');
+      }
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
+
   return (
     <div className="profile-settings-page">
       <h1 className="profile-settings-title pageTitle">Profile and Settings</h1>
@@ -288,6 +368,22 @@ const ProfileAndSettings = () => {
           </div>
         )}
       </div>
+      <section className="deleteAccountSection" aria-labelledby="delete-account-title">
+            <h2 className="deleteAccountTitle">Delete Account</h2>
+            <p className="deleteAccountWarning">
+              This permanently deletes your account, profile, and journal entries.
+            </p>
+            {deleteError && <p className="deleteAccountError" role="alert">{deleteError}</p>}
+            <button
+              type="button"
+              className="deleteAccountButton"
+              onClick={handleDeleteAccount}
+              disabled={isDeletingAccount}
+            >
+              {isDeletingAccount ? 'Deleting…' : 'Delete Account'}
+            </button>
+      </section>
+      
 
       <NavBar />
     </div>

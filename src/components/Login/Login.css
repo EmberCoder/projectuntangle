@@ -88,6 +88,41 @@ button {
     clear: both;
 }
 
+.birthDateHelp {
+    margin: 0 1rem 0.75rem;
+    color: #5c554a;
+    font-size: 0.95rem;
+}
+
+.birthDateFields {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 0.75rem;
+    width: min(100% - 2rem, 22rem);
+    margin: 0 1rem;
+}
+
+.birthDateFields label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #4d463f;
+    font-family: "Fredoka", sans-serif;
+    font-size: 0.9rem;
+}
+
+.birthDateFields select {
+    min-width: 0;
+    width: 100%;
+    height: 2.75rem;
+    padding: 0.5rem;
+    border: 1px solid rgb(181, 155, 127);
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #2a2a2a;
+    font: 1rem "Fredoka", sans-serif;
+}
+
 .goal-options {
     display: flex;
     flex-direction: column;
@@ -120,6 +155,7 @@ button {
     justify-content: space-between;
     width: 100%;
     max-width: 22rem;
+    min-height: 2.75rem;
     margin: 0 0 1rem 1rem;
     font-family: "Fredoka", sans-serif;
     color: rgb(139, 145, 97);
@@ -131,9 +167,13 @@ button {
     height: 1.75rem;
     border-radius: 999px;
     border: none;
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
     background: #d8d8d8;
     cursor: pointer;
     padding: 0.2rem;
+    margin: 0;
 }
 
 .toggle.on {
@@ -156,19 +196,76 @@ button {
 }
 
 .privacy-box {
-    width: 100%;
+    box-sizing: border-box;
+    width: min(calc(100% - 1rem), 22rem);
     max-width: 22rem;
     margin-left: 1rem;
-    padding: 1rem;
+    min-width: 0;
+    padding: 0.75rem;
     border: 1px solid rgb(181, 155, 127);
     border-radius: 0.75rem;
     background: #fffaf6;
     color: #2a2a2a;
 }
 
-.privacy-box h3 {
+.privacy-box-title {
     margin: 0 0 0.5rem;
-    color: rgb(139, 145, 97);
+    color: rgb(105, 83, 62);
+    font-family: "Fredoka", sans-serif;
+    font-size: 1.1rem;
+}
+
+.privacy-policy-scroll {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    max-height: min(42vh, 20rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    overflow-wrap: anywhere;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    color: #2a2a2a;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.privacy-policy-scroll h4 {
+    margin: 1rem 0 0.35rem;
+    color: rgb(105, 83, 62);
+    font-family: "Fredoka", sans-serif;
+    font-size: 1rem;
+}
+
+.privacy-policy-scroll h4:first-of-type {
+    margin-top: 0;
+}
+
+.privacy-policy-scroll p {
+    margin: 0 0 0.65rem;
+    overflow-wrap: anywhere;
+}
+
+.privacy-policy-scroll ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+}
+
+.privacy-policy-scroll li {
+    margin-bottom: 0.3rem;
+    overflow-wrap: anywhere;
+}
+
+.privacy-onboarding-panel {
+    width: 100%;
+}
+
+.privacy-policy-scroll a {
+    color: rgb(110, 75, 54);
+    overflow-wrap: anywhere;
 }
 
 .checkbox-row {

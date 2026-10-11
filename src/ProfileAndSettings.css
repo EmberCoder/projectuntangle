@@ -232,3 +232,53 @@
 input {
     background-color: white;
 }
+
+.deleteAccountSection {
+  width: min(100%, 26rem);
+  margin: 2rem auto 6rem;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid #e8d8cc;
+  text-align: center;
+}
+
+.deleteAccountTitle {
+  margin: 0 0 0.5rem;
+  color: #4a2d1b;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+}
+
+.deleteAccountWarning {
+  margin: 0 auto 1rem;
+  color: #66594f;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.deleteAccountButton {
+  min-height: 2.5rem;
+  margin: 0;
+  padding: 0.55rem 1rem;
+  border: 1px solid #8a5a3c;
+  border-radius: 0.5rem;
+  background: #8a5a3c;
+  color: #fff;
+  font: 600 0.95rem 'Fredoka', sans-serif;
+  cursor: pointer;
+}
+
+.deleteAccountButton:hover:not(:disabled) {
+  border-color: #71462f;
+  background: #71462f;
+}
+
+.deleteAccountButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.deleteAccountError {
+  margin: 0 0 1rem;
+  color: #a12622;
+  font-size: 0.875rem;
+}
