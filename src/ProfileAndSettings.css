@@ -1,0 +1,231 @@
+.profile-settings-page {
+  min-height: 100vh;
+  background-color: #fff2e5;
+  padding: 1rem;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+  color: #3a3a32;
+}
+
+.profileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.profileImageWrapper {
+  position: relative;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  margin: 0;
+  border: 4px solid #e7b5d1;
+  background-color: #f5efe9;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profileImage.is-loading {
+  visibility: hidden;
+}
+
+.profileImageInput {
+  display: none;
+}
+
+.profilePhotoError {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.changeOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.6rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  pointer-events: none;
+}
+
+.profileImageOptions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  width: min(100%, 17rem);
+  box-sizing: border-box;
+  margin-top: 0.35rem;
+  padding: 0.8rem;
+  background: #fffaf6;
+  border: 1px solid #e8d8cc;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 22px rgba(74, 45, 27, 0.1);
+}
+
+.profileColorOptions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.8rem;
+}
+
+.profileColorOption {
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+  border: 2px solid rgba(74, 45, 27, 0.18);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profileColorOption:hover {
+  transform: scale(1.08);
+  border-color: #78513d;
+}
+
+.profileColorOption:focus-visible,
+.profileUploadButton:focus-visible,
+.profileResetButton:focus-visible,
+.profileCloseButton:focus-visible {
+  outline: 3px solid #a76f4e;
+  outline-offset: 2px;
+}
+
+.profileUploadButton,
+.profileResetButton,
+.profileCloseButton {
+  border: 1px solid #d3b8a7;
+  background: #fffaf7;
+  color: #5f3b2c;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profileUploadButton {
+  background: #8a5a3c;
+  color: #fff;
+  border-color: #8a5a3c;
+}
+
+.profileCloseButton {
+  background: #f1e6df;
+}
+
+.profileUploadButton,
+.profileResetButton,
+.profileCloseButton {
+  align-self: center;
+  width: 8.5rem;
+  min-height: 2rem;
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.profileNameRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.profileNameEditor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.profileDisplayName {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #4a2d1b;
+  text-align: center;
+  line-height: 1;
+}
+
+.profileNameInput {
+  border: 1px solid #d5b09c;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 1rem;
+  min-width: 11rem;
+}
+
+.editNameButton,
+.saveNameButton,
+.cancelNameButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: middle;
+  position: static;
+}
+
+.editNameButton {
+  width: 1.8rem;
+  height: 1.8rem;
+  background: none;
+  color: #4a2d1b;
+  font-size: 1.2rem;
+  padding: 0;
+  margin-left: 0;
+}
+
+.saveNameButton {
+  background: #8a5a3c;
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  min-width: 3.5rem;
+  height: 2rem;
+}
+
+.cancelNameButton {
+  background: #f1e6df;
+  color: #5d3526;
+  padding: 0.45rem 0.8rem;
+  min-width: 3.9rem;
+  height: 2rem;
+}
+
+input {
+    background-color: white;
+}

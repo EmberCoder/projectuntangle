@@ -28,7 +28,7 @@ ul {
     justify-content: center;
     align-items: center;
     gap: clamp(1rem, 8vw, 9rem);
-    background-color: #8b9161;
+    background-color: rgb(139, 145, 97);
     position: fixed;
     bottom: 0;
     left: 0;
