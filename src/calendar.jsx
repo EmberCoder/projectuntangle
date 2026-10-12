@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ChevronLeft, ChevronRight, Clock, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import './Calendar.css';
+import './calendar.css';
 import NavBar from './components/NavBar/NavBar';
 import ProfileButton from './components/ProfileButton.jsx';
 import { auth, authPersistenceReady } from './firebase';
