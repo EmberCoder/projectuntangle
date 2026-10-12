@@ -303,11 +303,16 @@ button {
     text-decoration: none;
 }
 
+.pageHeaderBar .backButton {
+    float: none;
+    margin: 0;
+}
+
 .backButton + h1,
 .backButton + .todoTitle,
 .backButton + .journalTitle,
 .backButton + .SelfCareHeader {
-    margin-top: 4.5rem;
+    margin-top: 0;
 }
 
 input {

@@ -270,8 +270,10 @@ const ProfileAndSettings = () => {
 
   return (
     <div className="profile-settings-page">
-      <h1 className="profile-settings-title pageTitle">Profile and Settings</h1>
-      <ProfileButton />
+      <div className="pageHeaderBar">
+        <ProfileButton />
+        <h1 className="profile-settings-title pageTitle">Profile and Settings</h1>
+      </div>
 
       <div className="profileContent">
         <div className="profileImageWrapper" onClick={() => setIsPaletteOpen((prev) => !prev)}>
