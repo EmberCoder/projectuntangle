@@ -1,7 +1,7 @@
-import { getAnalytics, isSupported } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence, updateProfile } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { getAnalytics, isSupported } from "@firebase/analytics";
+import { initializeApp } from "@firebase/app";
+import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence, updateProfile } from "@firebase/auth";
+import { doc, getDoc, getFirestore, setDoc } from "@firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
