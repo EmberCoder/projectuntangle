@@ -325,6 +325,13 @@ input {
     margin-bottom: 1rem;
 }
 
+.emailAuthSuggestion {
+    display: inline-block;
+    margin: 0 0 1rem;
+    color: rgb(133, 86, 60);
+    font-weight: 600;
+}
+
 .onboarding-footer {
   display: flex;
   align-items: center;
