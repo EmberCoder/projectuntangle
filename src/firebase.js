@@ -1,4 +1,4 @@
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence, updateProfile } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
@@ -14,7 +14,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const analyticsReady = isSupported()
+  .then((supported) => supported ? getAnalytics(app) : null)
+  .catch((error) => {
+    console.warn('Firebase Analytics is unavailable:', error);
+    return null;
+  });
 
 const ONBOARDING_KEY = 'serenity_onboarding_status';
 
