@@ -433,8 +433,8 @@ export default function Calendar() {
       <div className="CalendarPage">
         {/* Header */}
         <header className="CalendarHeader">
+          <ProfileButton />
           <div className="pageHeaderBar">
-            <ProfileButton />
             <h1 className="CalendarTitle pageTitle">Calendar</h1>
           </div>
         </header>
