@@ -58,7 +58,7 @@ h1 {
 }
 
 .AppHomeButton {
-  position: fixed;
+  position: absolute;
   top: 1rem;
   left: 1rem;
   z-index: 1200;
