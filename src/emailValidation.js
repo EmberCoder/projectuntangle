@@ -1,0 +1,1 @@
+export const isValidEmailAddress = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());

@@ -7,7 +7,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background-color: #8b5a5a;
+  background-color: var(--palette-navy);
   padding: 15px 18px;
   border-radius: 15px;
 }
@@ -20,14 +20,14 @@
 .taskName {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #fff2e5;
+  color: var(--palette-ice);
   margin-bottom: 5px;
 }
 
 .taskDueDate,
 .taskDescription {
   font-size: 0.8rem;
-  color: #f5dfe7;
+  color: var(--palette-ice);
 }
 
 .taskDueDate {
@@ -45,9 +45,9 @@
   border: none;
   border-radius: 15px;
   padding: 6px 15px;
-  background-color: #e7b5d1;
-  color: #3A3A32;
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-sage);
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
   cursor: pointer;
 }
 
@@ -66,7 +66,7 @@
   padding: 10px 14px;
   border: none;
   border-radius: 12px;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 1rem;
 }
 
@@ -74,9 +74,9 @@
   border: none;
   border-radius: 20px;
   padding: 10px 25px;
-  background-color: #e7b5d1;
-  color: #3A3A32;
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-sage);
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 16px;
   cursor: pointer;
 }
@@ -92,7 +92,7 @@
   gap: 12px;
   width: 100%;
   padding: 15px;
-  background-color: #8b5a5a;
+  background-color: var(--palette-navy);
   border-radius: 15px;
   padding: 15px 20px;
 }
@@ -103,7 +103,7 @@
   padding: 10px 14px;
   border: none;
   border-radius: 12px;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 1rem;
 }
 
@@ -111,9 +111,9 @@
   border: none;
   border-radius: 20px;
   padding: 8px 20px;
-  background-color: #e7b5d1;
-  color: #3A3A32;
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-sage);
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 15px;
   cursor: pointer;
 }
@@ -145,9 +145,9 @@ body {
   border: none;
   border-radius: 20px;
   padding: 12px 20px;
-  background-color: #995f7d;
-  color: #fff2e5;
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-navy);
+  color: var(--palette-ice);
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 17px;
   cursor: pointer;
 }
@@ -171,9 +171,9 @@ body {
   border: none;
   border-radius: 20px;
   padding: 10px 18px;
-  background-color: #995f7d;
+  background-color: var(--palette-navy);
   color: white;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 15px;
   cursor: pointer;
 }
@@ -193,20 +193,20 @@ body {
   max-width: 500px;
   margin: 25px auto 40px;
   padding: 20px;
-  background-color: #e7b5d1;
+  background-color: var(--palette-sage);
   border-radius: 18px;
-  color: #3A3A32;
-  font-family: "Fredoka", sans-serif;
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 .subtasksResults h2 {
-  color: #85563c;
+  color: var(--palette-navy);
   margin-bottom: 20px;
   text-align: center;
 }
 
 .subtasksResults h3 {
-  color: #85563c;
+  color: var(--palette-navy);
   margin-bottom: 12px;
   margin-top: 0;
 }
@@ -216,7 +216,7 @@ body {
 }
 
 .subtaskGroup h3 {
-  color: #85563c;
+  color: var(--palette-navy);
   margin-bottom: 8px;
 }
 
@@ -259,14 +259,14 @@ body {
   max-width: 500px;
   margin: 25px auto 40px;
   padding: 20px;
-  background-color: #e7b5d1;
+  background-color: var(--palette-sage);
   border-radius: 18px;
-  color: #3A3A32;
-  font-family: "Fredoka", sans-serif;
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 .scheduleResults h2 {
-  color: #85563c;
+  color: var(--palette-navy);
   margin-bottom: 20px;
   text-align: center;
 }
@@ -292,8 +292,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #995f7d;
-  color: #fff2e5;
+  background-color: var(--palette-navy);
+  color: var(--palette-ice);
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -304,7 +304,7 @@ body {
 
 .scheduleTask {
   font-weight: bold;
-  color: #85563c;
+  color: var(--palette-navy);
   margin-bottom: 4px;
 }
 
@@ -322,11 +322,11 @@ body {
 .scheduleExplanation {
   margin-top: 18px;
   padding-top: 15px;
-  border-top: 1px solid rgba(58, 58, 50, 0.2);
+  border-top: 1px solid rgba(35, 9, 3, 0.2);
 }
 
 .scheduleExplanation strong {
-  color: #85563c;
+  color: var(--palette-navy);
 }
 
 .scheduleExplanation p {
@@ -340,9 +340,9 @@ body {
   padding: 10px 14px;
   border: none;
   border-radius: 12px;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 1rem;
-  background-color: #ffffff;
-  color: #3A3A32;
+  background-color: var(--palette-ice);
+  color: var(--palette-ink);
 
 }

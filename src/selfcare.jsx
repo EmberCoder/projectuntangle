@@ -4,6 +4,15 @@ import { MagnifyingGlass, ArrowSquareOut } from 'phosphor-react';
 import NavBar from './components/NavBar/NavBar';
 
 export default function SelfCare() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => unsubscribe();
+  }, []);
   const [zipCode, setZipCode] = useState('');
   const [activeZip, setActiveZip] = useState('');
   const [cityName, setCityName] = useState('Austin');
@@ -19,7 +28,7 @@ export default function SelfCare() {
     { title: 'Crisis Support Services', number: '800-273-8255' },
   ];
 
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     const cleanZip = zipCode.trim();
     if (cleanZip.length < 5) return;
@@ -192,9 +201,9 @@ export default function SelfCare() {
       <div className="ResourceCard" style={{ marginTop: '2rem' }}>
         <p>
           Looking for extra support?{' '}
-          <a
-            href="https://www.psychologytoday.com"
-            target="_blank"
+          <a 
+            href="https://www.psychologytoday.com" 
+            target="_blank" 
             rel="noopener noreferrer"
           >
             Psychology Today
@@ -205,7 +214,7 @@ export default function SelfCare() {
 
       {/* Hotlines Section */}
       <section style={{ marginTop: '2.5rem', marginBottom: '3rem' }}>
-        <h2 style={{ color: 'rgb(133, 86, 60)', fontSize: '2rem', marginBottom: '0.5rem' }}>
+        <h2 style={{ color: 'var(--palette-navy)', fontSize: '2rem', marginBottom: '0.5rem' }}>
           Hotlines & Help
         </h2>
         <p className="SelfCareSubheading">
@@ -224,30 +233,7 @@ export default function SelfCare() {
         </div>
       </section>
 
-      {/* Perfectly Centered & Sticky Bottom Navigation Bar */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '100vw',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingBottom: '1rem',
-          paddingTop: '0.75rem',
-          backgroundColor: 'rgba(253, 246, 238, 0.95)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          zIndex: 9999,
-          boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.05)',
-        }}
-      >
-        <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'center' }}>
-          <NavBar />
-        </div>
-      </div>
+      <NavBar />
     </div>
   );
 }

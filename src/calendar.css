@@ -1,12 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
 /* --- Global Reset & Root Viewport Setup --- */
 html, body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  background-color: rgb(255, 242, 229);
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-sky);
+  font-family: "Google Sans Flex", sans-serif;
   overflow-x: hidden;
 }
 
@@ -19,8 +18,8 @@ html, body {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 7rem 1.5rem; /* 7rem bottom padding prevents content from overlapping navbar */
-  font-family: "Fredoka", sans-serif;
+  padding: 0 1.5rem 7rem 1.5rem; /* 7rem bottom padding prevents content from overlapping navbar */
+  font-family: "Google Sans Flex", sans-serif;
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -30,16 +29,29 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 0;
   margin-bottom: 1rem;
+}
+
+.CalendarHeader .pageHeaderBar {
+  padding-top: 4.5rem;
+}
+
+.CalendarHeader > .profile-menu-wrapper {
+  position: fixed;
+  top: 0 !important;
+  right: 1rem;
+  z-index: 1000;
+  width: auto;
+  margin: 0;
 }
 
 .CalendarTitle {
   font-size: 3rem;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
   margin: 0;
   font-weight: 600;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 .IconButton {
@@ -59,14 +71,14 @@ html, body {
 }
 
 .AuthButton {
-  background-color: rgb(133, 86, 60);
-  color: #ffffff;
+  background-color: var(--palette-navy);
+  color: var(--palette-ice);
   border: none;
   padding: 0.6rem 1.25rem;
   border-radius: 2rem;
   font-size: 0.95rem;
   font-weight: 600;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -77,11 +89,11 @@ html, body {
 
 /* --- Calendar Main Card --- */
 .CalendarCard {
-  background-color: #ffffff;
+  background-color: var(--palette-ice);
   border-radius: 1rem;
   padding: 1.25rem;
-  border: 2px solid rgb(181, 155, 127);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 2px solid var(--palette-sage);
+  box-shadow: 0 2px 4px rgba(44, 62, 70, 0.05);
   margin-bottom: 1.5rem;
 }
 
@@ -89,7 +101,7 @@ html, body {
   text-align: center;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
   font-size: 1.4rem;
 }
 
@@ -99,7 +111,7 @@ html, body {
   text-align: center;
   font-weight: 600;
   font-size: 0.95rem;
-  color: rgb(181, 155, 127);
+  color: var(--palette-sage);
   margin-bottom: 0.5rem;
 }
 
@@ -111,18 +123,384 @@ html, body {
 
 .CalendarCell {
   aspect-ratio: 1;
-  border: 1px solid rgb(181, 155, 127);
+  border: 1px solid var(--palette-sage);
   border-radius: 0.5rem;
   padding: 0.25rem;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: var(--palette-ice);
+}
+
+.CalendarCell.TodayCell {
+  border: 2px solid var(--palette-navy);
 }
 
 .DayNumber {
   font-size: 0.85rem;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
   font-weight: 500;
+}
+
+.SymptomMarker {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  margin-top: 2px;
+  padding: 2px 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  font-size: 9px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.SymptomMarker > span:first-child {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--palette-navy);
+}
+
+.DayCategorySection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(59, 92, 112, 0.15);
+  border-radius: 8px;
+  background: rgba(234, 242, 245, 0.58);
+}
+
+.DayCategorySection h4 {
+  margin: 0;
+  color: var(--palette-navy);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.SymptomEntry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 100%;
+  min-height: 88px;
+  padding: 8px 10px;
+  border: 1px solid var(--palette-ice);
+  border-left: 4px solid var(--palette-navy);
+  border-radius: 6px;
+  background: var(--palette-ice);
+  color: var(--palette-ink);
+  font-size: 13px;
+}
+
+.StressSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.StressCarouselControls {
+  display: flex;
+  gap: 4px;
+}
+
+.StressCarouselControls button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--palette-navy);
+  border-radius: 50%;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  cursor: pointer;
+}
+
+.StressCarouselControls button:hover {
+  background: var(--palette-ice);
+}
+
+.StressLogList {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--palette-navy) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.StressLogList > .SymptomEntry {
+  scroll-snap-align: start;
+}
+
+.StressLogDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.StressLogDetails strong {
+  color: var(--palette-navy);
+  font-size: 12px;
+}
+
+.StressLogDetails span {
+  color: var(--palette-ink);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.StressEditButton {
+  min-width: 52px;
+  min-height: 34px;
+  margin: 0;
+  border: 1px solid var(--palette-navy);
+  border-radius: 5px;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  font: inherit;
+  cursor: pointer;
+}
+
+.StressQuizOverlay {
+  padding: 16px;
+  background: rgba(59, 92, 112, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.StressQuizModal {
+  width: min(100%, 440px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: var(--palette-ice);
+  border: 1px solid var(--palette-ice);
+  border-radius: 10px;
+  box-shadow: 0 18px 56px rgba(59, 92, 112, 0.24);
+}
+
+.StressQuizContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.StressQuizEyebrow {
+  color: var(--palette-navy);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.StressQuizContent h3,
+.StressQuizContent p {
+  margin: 0;
+}
+
+.StressQuizContent h3 {
+  padding-right: 28px;
+  color: var(--palette-ink);
+  font-size: 20px;
+}
+
+.StressQuizContent p {
+  color: var(--palette-ink);
+  font-size: 14px;
+}
+
+.StressLevelFieldset,
+.SymptomOptionsFieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.StressLevelFieldset legend,
+.SymptomOptionsFieldset legend {
+  margin-bottom: 8px;
+  color: var(--palette-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.StressLevelOptions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.StressLevelChoice {
+  min-width: 0;
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 5px 2px;
+  border: 1px solid var(--palette-ice);
+  border-radius: 6px;
+  background: var(--palette-ice);
+  color: var(--palette-ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  appearance: none;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.StressLevelChoice:hover {
+  transform: translateY(-2px);
+}
+
+.StressLevelChoice.is-selected {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.StressLevelChoice:nth-child(1).is-selected {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+}
+
+.StressLevelChoice:nth-child(2).is-selected {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+}
+
+.StressLevelChoice:nth-child(3).is-selected {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+}
+
+.StressLevelChoice:nth-child(4).is-selected {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+}
+
+.StressLevelChoice:nth-child(5).is-selected {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+}
+
+.StressLevelChoice > span {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.StressLevelChoice small {
+  font-size: 9px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.StressLevelChoice:focus-visible,
+.SymptomOption:focus-within {
+  outline: 2px solid var(--palette-navy);
+  outline-offset: 2px;
+}
+
+.SymptomOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.SymptomOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 9px;
+  border: 1px solid var(--palette-navy);
+  border-radius: 5px;
+  background: var(--palette-ice);
+  color: var(--palette-ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.SymptomOption input {
+  accent-color: var(--palette-navy);
+}
+
+.SymptomQuizActions,
+.StressQuizActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.StressQuizActions > button {
+  min-width: 0;
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.StressQuizActions > .StressDeleteButton {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  min-height: 38px;
+  padding: 0;
+  border: 1px solid var(--palette-sage);
+  border-radius: 8px;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.StressQuizActions > .StressDeleteButton:hover {
+  border-color: var(--palette-navy);
+  background: var(--palette-ice);
+}
+
+.StressQuizActions > .StressDeleteButton:focus-visible {
+  outline: 2px solid var(--palette-navy);
+  outline-offset: 2px;
+}
+
+.StressQuizActions > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.StressSaveError {
+  padding: 8px 10px;
+  border-left: 3px solid var(--palette-navy);
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  font-size: 12px;
 }
 
 /* --- Action Plus Button --- */
@@ -133,7 +511,7 @@ html, body {
 }
 
 .PlusButton {
-  background-color: rgb(236, 72, 153);
+  background-color: var(--palette-sage);
   border: none;
   border-radius: 50%;
   width: 56px;
@@ -142,7 +520,7 @@ html, body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+  box-shadow: 0 4px 10px rgba(145, 179, 193, 0.3);
   transition: transform 0.15s ease;
 }
 
@@ -157,7 +535,7 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(44, 62, 70, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -165,21 +543,21 @@ html, body {
 }
 
 .ModalContent {
-  background-color: #F3CEE2;
+  background-color: var(--palette-ice);
   border-radius: 1.25rem;
   width: 85%;
   max-width: 340px;
   padding: 1.5rem;
   position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  font-family: "Fredoka", sans-serif;
+  box-shadow: 0 4px 15px rgba(44, 62, 70, 0.15);
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 .CloseButton {
   position: absolute;
   top: 0.85rem;
   right: 0.85rem;
-  background-color: #ffffff;
+  background-color: var(--palette-ice);
   border: none;
   border-radius: 50%;
   width: 28px;
@@ -208,9 +586,9 @@ html, body {
   border-radius: 0.75rem;
   border: none;
   font-size: 1rem;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   outline: none;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
 }
 
 .CategoryPicker {
@@ -227,33 +605,57 @@ html, body {
 }
 
 .Divider {
-  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  border: 0.5px solid rgba(234, 242, 245, 0.6);
   margin: 0.25rem 0;
 }
 
 .ActionButtonPrimary {
-  background-color: rgb(133, 86, 60);
-  color: #ffffff;
+  background-color: var(--palette-navy);
+  color: var(--palette-ice);
   border: none;
   border-radius: 1.5rem;
   padding: 0.75rem;
   font-weight: 600;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-size: 0.95rem;
   cursor: pointer;
 }
 
 .ActionButtonSecondary {
-  background-color: #ffffff;
-  color: rgb(133, 86, 60);
+  background-color: var(--palette-ice);
+  color: var(--palette-navy);
   border: none;
   border-radius: 1.5rem;
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   cursor: pointer;
   text-align: center;
+}
+
+.EventDeleteButton {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--palette-ice);
+  border-radius: 4px;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.EventDeleteButton:hover:not(:disabled) {
+  background: var(--palette-ice);
+}
+
+.EventDeleteButton:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
 /* --- Fixed Bottom Navigation Wrapper --- */
@@ -264,6 +666,6 @@ html, body {
   right: 0;
   width: 100%;
   z-index: 1000;
-  background-color: #ffffff;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--palette-ice);
+  box-shadow: 0 -2px 10px rgba(44, 62, 70, 0.1);
 }

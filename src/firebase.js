@@ -1,7 +1,7 @@
-import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence, updateProfile } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { getAnalytics, isSupported } from "@firebase/analytics";
+import { initializeApp } from "@firebase/app";
+import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence, updateProfile } from "@firebase/auth";
+import { doc, getDoc, getFirestore, setDoc } from "@firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,8 +13,26 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// Initialize Firebase App
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+/**
+ * FIXED: Wrap analytics initialization in an async function.
+ * This prevents the 'Component analytics has not been registered yet' error
+ * caused by top-level execution during the bundling phase.
+ */
+export const initAnalytics = async () => {
+  try {
+    const supported = await isSupported();
+    if (supported) {
+      return getAnalytics(app);
+    }
+    return null;
+  } catch (error) {
+    console.warn('Firebase Analytics is unavailable:', error);
+    return null;
+  }
+};
 
 const ONBOARDING_KEY = 'serenity_onboarding_status';
 
@@ -24,8 +42,7 @@ export const getOnboardingStatus = (email) => {
   try {
     const raw = localStorage.getItem(ONBOARDING_KEY);
     const statuses = raw ? JSON.parse(raw) : {};
-    const status = statuses[email.toLowerCase()];
-    return status || 'incomplete';
+    return statuses[email.toLowerCase()] || 'incomplete';
   } catch {
     return 'incomplete';
   }
@@ -40,7 +57,7 @@ export const setOnboardingStatus = (email, status) => {
     statuses[email.toLowerCase()] = status;
     localStorage.setItem(ONBOARDING_KEY, JSON.stringify(statuses));
   } catch {
-    // ignore storage issues in restricted environments
+    // Ignore storage issues in restricted environments.
   }
 };
 
@@ -53,10 +70,11 @@ export const clearOnboardingStatus = (email) => {
     delete statuses[email.toLowerCase()];
     localStorage.setItem(ONBOARDING_KEY, JSON.stringify(statuses));
   } catch {
-    // ignore storage issues in restricted environments
+    // Ignore storage issues in restricted environments.
   }
 };
 
+// Initialize other services
 export const auth = getAuth(app);
 export const authPersistenceReady = setPersistence(auth, browserLocalPersistence);
 export const googleProvider = new GoogleAuthProvider();

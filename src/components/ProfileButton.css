@@ -1,9 +1,20 @@
 .profile-menu-wrapper {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
+  position: relative;
   display: inline-block;
-  z-index: 1000;
+  z-index: 1;
+  margin-left: auto;
+}
+
+.pageHeaderBar .profile-menu-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-block;
+  width: auto;
+  margin-left: auto;
+}
+
+.profile-menu-wrapper .profile-button {
+  display: inline-flex;
 }
 
 .profile-menu-wrapper + h1,
@@ -12,7 +23,7 @@
 .profile-menu-wrapper + .todoTitle,
 .profile-menu-wrapper + .journalTitle,
 .profile-menu-wrapper + .profile-settings-title {
-  margin-top: 4rem;
+  margin-top: 0;
 }
 
 .profile-button {
@@ -37,7 +48,7 @@
 }
 
 .profile-button.is-loading {
-  background-color: #ead8ca;
+  background-color: var(--palette-ice);
 }
 
 .profile-button.is-loading img {
@@ -48,6 +59,7 @@
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
+  left: auto;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -56,13 +68,13 @@
 
 .profile-dropdown-button,
 .profile-logout-button {
-  background: #ffffff;
-  color: #2c2c2c;
-  border: 1px solid #e5e5e5;
+  background: var(--palette-ice);
+  color: var(--palette-ink);
+  border: 1px solid var(--palette-sage);
   border-radius: 0.75rem;
   font-size: 0.95rem;
   font-weight: 600;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 16px rgba(35, 9, 3, 0.12);
   cursor: pointer;
   white-space: nowrap;
   margin: 0;
@@ -71,6 +83,6 @@
 }
 
 .profile-logout-button {
-  color: #d32f2f;
-  border-color: #f3c2c2;
+  color: var(--palette-navy);
+  border-color: var(--palette-ice);
 }

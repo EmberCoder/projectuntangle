@@ -1,23 +1,19 @@
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from './components/Login/BackButton';
 import './components/Login/Login.css';
+import PrivacyPolicy from './components/PrivacyPolicy';
 import { auth, authPersistenceReady, db, setOnboardingStatus } from './firebase';
-
-const goalOptions = [
-  'Daily Productivity',
-  'Stress & Anxiety Relief',
-  'Grounding',
-];
 
 const Onboarding = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
+  const [birthMonth, setBirthMonth] = useState(location.state?.birthMonth || '');
+  const [birthYear, setBirthYear] = useState(location.state?.birthYear || '');
   const [name, setName] = useState(location.state?.username || '');
-  const [goal, setGoal] = useState(goalOptions[0]);
   const [allowNotifications, setAllowNotifications] = useState(true);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [error, setError] = useState('');
@@ -26,8 +22,33 @@ const Onboarding = () => {
   const pendingEmail = location.state?.email || '';
   const pendingPassword = location.state?.password || '';
 
-  const validateCurrentStep = () => {
-    if (currentPage === 0 && !name.trim()) {
+  const validateCurrentStep = async () => {
+    if (!birthMonth || !birthYear) {
+      setError('Please enter your birth month and year to continue.');
+      return false;
+    }
+
+    const today = new Date();
+    const age = today.getFullYear() - Number(birthYear) - (
+      today.getMonth() + 1 < Number(birthMonth) ? 1 : 0
+    );
+
+    if (age < 13) {
+      if (auth.currentUser) {
+        try {
+          await deleteUser(auth.currentUser);
+        } catch (deleteError) {
+          console.error('Could not remove underage Google account:', deleteError);
+          setError('We could not complete account setup. Please contact support.');
+          return false;
+        }
+      }
+
+      setError('We can’t create an account with the information provided.');
+      return false;
+    }
+
+    if (currentPage === 1 && !name.trim()) {
       setError('Please enter your name before continuing.');
       return false;
     }
@@ -41,8 +62,8 @@ const Onboarding = () => {
     return true;
   };
 
-  const handleNext = () => {
-    if (!validateCurrentStep()) return;
+  const handleNext = async () => {
+    if (!await validateCurrentStep()) return;
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
@@ -56,7 +77,7 @@ const Onboarding = () => {
   };
 
   const handleFinishOnboarding = async () => {
-    if (!validateCurrentStep()) return;
+    if (!await validateCurrentStep()) return;
 
     const trimmedName = name.trim();
 
@@ -113,6 +134,34 @@ const Onboarding = () => {
 
       {currentPage === 0 && (
         <div className="onboarding-panel">
+          <h2 className="nameQuestion">When were you born?</h2>
+          <div className="birthDateFields">
+            <label>
+              <span>Birth month</span>
+              <select value={birthMonth} onChange={(event) => setBirthMonth(event.target.value)}>
+                <option value="">Select month</option>
+                {Array.from({ length: 12 }, (_, index) => (
+                  <option key={index + 1} value={String(index + 1)}>
+                    {new Date(2000, index).toLocaleString('en', { month: 'long' })}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Birth year</span>
+              <select value={birthYear} onChange={(event) => setBirthYear(event.target.value)}>
+                <option value="">Select year</option>
+                {Array.from({ length: 121 }, (_, index) => new Date().getFullYear() - index).map((year) => (
+                  <option key={year} value={String(year)}>{year}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      )}
+
+      {currentPage === 1 && (
+        <div className="onboarding-panel">
           <h2 className="nameQuestion">What should we call you?</h2>
           <input
             type="text"
@@ -124,26 +173,8 @@ const Onboarding = () => {
         </div>
       )}
 
-      {currentPage === 1 && (
-        <div className="onboarding-panel">
-          <h2 className="nameQuestion">What do you want to use the app for?</h2>
-          <div className="goal-options">
-            {goalOptions.map((option) => (
-              <button
-                key={option}
-                type="button"
-                className={`goal-option ${goal === option ? 'selected' : ''}`}
-                onClick={() => setGoal(option)}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {currentPage === 2 && (
-        <div className="onboarding-panel">
+        <div className="onboarding-panel privacy-onboarding-panel">
           <h2 className="nameQuestion">Notifications & privacy</h2>
 
           <div className="toggle-row">
@@ -159,8 +190,8 @@ const Onboarding = () => {
           </div>
 
           <div className="privacy-box">
-            <h3>Privacy Policy</h3>
-            <p>Privacy policy goes here</p>
+            <h3 className="privacy-box-title">Privacy Policy</h3>
+            <PrivacyPolicy />
           </div>
 
           <label className="checkbox-row">

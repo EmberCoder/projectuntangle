@@ -1,10 +1,12 @@
 import './Login.css';
+import { Link } from 'react-router-dom';
 
-const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, isSignUp, error }) => {
+const EmailLogin = ({ email, password, setEmail, setPassword, handleEmailAuth, isSignUp, error, alternatePath, alternateLabel }) => {
   return (
        <div>
         <form onSubmit={handleEmailAuth}>
           {error && <p className="error">{error}</p>}
+          {alternatePath && <Link className="emailAuthSuggestion" to={alternatePath}>{alternateLabel}</Link>}
           <div>
             <input className="inputField"
               type="email" 

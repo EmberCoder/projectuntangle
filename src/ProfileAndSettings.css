@@ -1,10 +1,10 @@
 .profile-settings-page {
   min-height: 100vh;
-  background-color: #fff2e5;
+  background-color: var(--palette-sky);
   padding: 1rem;
   box-sizing: border-box;
-  font-family: 'Fredoka', sans-serif;
-  color: #3a3a32;
+  font-family: 'Google Sans Flex', sans-serif;
+  color: var(--palette-ink);
 }
 
 .profileContent {
@@ -24,8 +24,8 @@
   overflow: hidden;
   cursor: pointer;
   margin: 0;
-  border: 4px solid #e7b5d1;
-  background-color: #f5efe9;
+  border: 4px solid var(--palette-sage);
+  background-color: var(--palette-ice);
 }
 
 .profileImage {
@@ -45,7 +45,7 @@
 
 .profilePhotoError {
   margin: 0;
-  color: #b42318;
+  color: var(--palette-navy);
   font-size: 0.85rem;
   text-align: center;
 }
@@ -59,8 +59,8 @@
   align-items: center;
   justify-content: center;
   height: 1.6rem;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  background: rgba(35, 9, 3, 0.5);
+  color: var(--palette-ice);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -77,10 +77,10 @@
   box-sizing: border-box;
   margin-top: 0.35rem;
   padding: 0.8rem;
-  background: #fffaf6;
-  border: 1px solid #e8d8cc;
+  background: var(--palette-ice);
+  border: 1px solid var(--palette-ice);
   border-radius: 0.5rem;
-  box-shadow: 0 8px 22px rgba(74, 45, 27, 0.1);
+  box-shadow: 0 8px 22px rgba(35, 9, 3, 0.1);
 }
 
 .profileColorOptions {
@@ -95,32 +95,32 @@
   width: 2.35rem;
   height: 2.35rem;
   flex: 0 0 auto;
-  border: 2px solid rgba(74, 45, 27, 0.18);
+  border: 2px solid rgba(35, 9, 3, 0.18);
   border-radius: 50%;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 2px rgba(201, 249, 255, 0.7);
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .profileColorOption:hover {
   transform: scale(1.08);
-  border-color: #78513d;
+  border-color: var(--palette-navy);
 }
 
 .profileColorOption:focus-visible,
 .profileUploadButton:focus-visible,
 .profileResetButton:focus-visible,
 .profileCloseButton:focus-visible {
-  outline: 3px solid #a76f4e;
+  outline: 3px solid var(--palette-navy);
   outline-offset: 2px;
 }
 
 .profileUploadButton,
 .profileResetButton,
 .profileCloseButton {
-  border: 1px solid #d3b8a7;
-  background: #fffaf7;
-  color: #5f3b2c;
+  border: 1px solid var(--palette-ice);
+  background: var(--palette-ice);
+  color: var(--palette-ink);
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
   font-size: 0.75rem;
@@ -129,13 +129,13 @@
 }
 
 .profileUploadButton {
-  background: #8a5a3c;
-  color: #fff;
-  border-color: #8a5a3c;
+  background: var(--palette-navy);
+  color: var(--palette-ice);
+  border-color: var(--palette-navy);
 }
 
 .profileCloseButton {
-  background: #f1e6df;
+  background: var(--palette-ice);
 }
 
 .profileUploadButton,
@@ -172,13 +172,13 @@
   gap: 0.35rem;
   font-size: 1.4rem;
   font-weight: 600;
-  color: #4a2d1b;
+  color: var(--palette-ink);
   text-align: center;
   line-height: 1;
 }
 
 .profileNameInput {
-  border: 1px solid #d5b09c;
+  border: 1px solid var(--palette-ice);
   border-radius: 0.5rem;
   padding: 0.45rem 0.7rem;
   font-size: 1rem;
@@ -204,7 +204,7 @@
   width: 1.8rem;
   height: 1.8rem;
   background: none;
-  color: #4a2d1b;
+  color: var(--palette-ink);
   font-size: 1.2rem;
   padding: 0;
   margin: 0;
@@ -212,8 +212,8 @@
 }
 
 .saveNameButton {
-  background: #8a5a3c;
-  color: #fff;
+  background: var(--palette-navy);
+  color: var(--palette-ice);
   padding: 0.45rem 0.8rem;
   min-width: 3.5rem;
   height: 2rem;
@@ -221,8 +221,8 @@
 }
 
 .cancelNameButton {
-  background: #f1e6df;
-  color: #5d3526;
+  background: var(--palette-ice);
+  color: var(--palette-ink);
   padding: 0.45rem 0.8rem;
   min-width: 3.9rem;
   height: 2rem;
@@ -231,4 +231,54 @@
 
 input {
     background-color: white;
+}
+
+.deleteAccountSection {
+  width: min(100%, 26rem);
+  margin: 2rem auto 6rem;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--palette-ice);
+  text-align: center;
+}
+
+.deleteAccountTitle {
+  margin: 0 0 0.5rem;
+  color: var(--palette-ink);
+  font-family: 'Google Sans Flex', sans-serif;
+  font-size: 1.2rem;
+}
+
+.deleteAccountWarning {
+  margin: 0 auto 1rem;
+  color: var(--palette-ink);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.deleteAccountButton {
+  min-height: 2.5rem;
+  margin: 0;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--palette-navy);
+  border-radius: 0.5rem;
+  background: var(--palette-navy);
+  color: var(--palette-ice);
+  font: 600 0.95rem 'Google Sans Flex', sans-serif;
+  cursor: pointer;
+}
+
+.deleteAccountButton:hover:not(:disabled) {
+  border-color: var(--palette-navy);
+  background: var(--palette-navy);
+}
+
+.deleteAccountButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.deleteAccountError {
+  margin: 0 0 1rem;
+  color: var(--palette-navy);
+  font-size: 0.875rem;
 }
