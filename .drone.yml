@@ -29,7 +29,7 @@ steps:
         path: /mnt/target # Use a clean internal path to avoid confusion
     commands:
       # Install dependencies
-      - npm install
+      - npm install || (cat /root/.npm/_logs/*-debug-0.log && exit 1)
       # Run compilation build with Firebase config injected from Drone secrets
       - npm run build
       # Clear old build artifacts on the host
