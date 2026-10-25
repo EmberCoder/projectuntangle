@@ -56,6 +56,10 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
+.SelfCarePage .pageHeaderBar {
+  margin: 0 -1rem 0.5rem;
+}
+
 .SelfCareSubheading {
   color: var(--palette-navy);
   font-size: 1.1rem;
