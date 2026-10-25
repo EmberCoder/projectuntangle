@@ -244,7 +244,7 @@ export default function SelfCare() {
         </div>
       </section>
 
-      {/* Perfectly Centered & Sticky Bottom Navigation Bar */}
+      {/* Not-Perfectly Centered & Sticky Bottom Navigation Bar */}
       <div
         style={{
           position: 'fixed',
