@@ -31,13 +31,13 @@ app.get('/api/events', async (req, res) => {
     }
 
     let data = await response.json();
-    
-    // 2. If the wellness keyword is too specific and returns 0 results for that zip, 
+
+    // 2. If the wellness keyword is too specific and returns 0 results for that zip,
     // fetch general live events in that area so your users still get real events and active ticket links.
     if (!data._embedded || !data._embedded.events || data._embedded.events.length === 0) {
       const generalTmUrl = `https://app.ticketmaster.com/discovery/v2/events.json?postalCode=${encodedZip}&radius=50&unit=miles&apikey=${apiKey}`;
       const generalResponse = await fetch(generalTmUrl);
-      
+
       if (generalResponse.ok) {
         data = await generalResponse.json();
       }
