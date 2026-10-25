@@ -2,6 +2,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ChevronLeft, ChevronRight, Clock, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import './calendar.css';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
 import ProfileButton from './components/ProfileButton.jsx';
 import { auth, authPersistenceReady } from './firebase';
@@ -9,14 +10,27 @@ import { deleteStressLog, getLocalDateKey, readStressLogs, saveStressLog } from 
 
 // Initial default categories
 const INITIAL_CATEGORIES = [
-  { name: 'School', color: '#EF4444', googleColorId: '11' }, // Red
-  { name: 'Self Care', color: '#EC4899', googleColorId: '4' }, // Pink
-  { name: 'Work', color: '#3B82F6', googleColorId: '9' },     // Blue
-  { name: 'Personal', color: '#10B981', googleColorId: '2' }  // Green
+  { name: 'School', color: '#23526D', googleColorId: '9' },
+  { name: 'Self Care', color: '#D6C1A5', googleColorId: '6' },
+  { name: 'Work', color: '#4A9CB5', googleColorId: '7' },
+  { name: 'Personal', color: '#F5F1E8', googleColorId: '8' }
 ];
 const APP_CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.appCalendarEvents';
 const LEGACY_CALENDAR_EVENTS_STORAGE_KEY = 'projectUntangle.calendarEvents';
 const GOOGLE_CALENDAR_LINK_STORAGE_KEY = 'projectUntangle.googleCalendarLinkedEmail';
+const GOOGLE_EVENT_COLORS = {
+  '1': '#a4bdfc',
+  '2': '#7ae7bf',
+  '3': '#dbadff',
+  '4': '#ff887c',
+  '5': '#fbd75b',
+  '6': '#ffb878',
+  '7': '#46d6db',
+  '8': '#e1e1e1',
+  '9': '#5484ed',
+  '10': '#51b749',
+  '11': '#dc2127',
+};
 const STRESS_LEVEL_LABELS = ['Very low', 'Low', 'Moderate', 'High', 'Very stressed'];
 const SYMPTOM_OPTIONS_BY_LEVEL = {
   1: ['Calm', 'Relaxed', 'Focused', 'Tired'],
@@ -32,6 +46,26 @@ const formatStressLogTime = (loggedAt) => new Date(loggedAt).toLocaleTimeString(
 });
 
 const googleEventsStorageKey = (email) => `projectUntangle.googleCalendarEvents.${encodeURIComponent(email.trim().toLowerCase())}`;
+
+const getClosestGoogleEventColorId = (hexColor) => {
+  const colorMatch = /^#?([0-9a-f]{6})$/i.exec(hexColor);
+  if (!colorMatch) return '1';
+
+  const colorValue = Number.parseInt(colorMatch[1], 16);
+  const red = (colorValue >> 16) & 255;
+  const green = (colorValue >> 8) & 255;
+  const blue = colorValue & 255;
+
+  return Object.entries(GOOGLE_EVENT_COLORS).reduce((closest, [colorId, googleHex]) => {
+    const googleValue = Number.parseInt(googleHex.slice(1), 16);
+    const redDifference = red - ((googleValue >> 16) & 255);
+    const greenDifference = green - ((googleValue >> 8) & 255);
+    const blueDifference = blue - (googleValue & 255);
+    const distance = redDifference ** 2 + greenDifference ** 2 + blueDifference ** 2;
+
+    return distance < closest.distance ? { colorId, distance } : closest;
+  }, { colorId: '1', distance: Infinity }).colorId;
+};
 
 const readStoredEvents = (key) => {
   try {
@@ -55,6 +89,7 @@ export default function Calendar() {
   const [isDayDetailOpen, setIsDayDetailOpen] = useState(false);
   const [selectedGridDate, setSelectedGridDate] = useState(null);
   const [events, setEvents] = useState(readAppEvents);
+  const [isAppLoggedIn, setIsAppLoggedIn] = useState(Boolean(auth.currentUser));
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
   const [linkedGoogleEmail, setLinkedGoogleEmail] = useState(null);
@@ -71,6 +106,16 @@ export default function Calendar() {
   const [stressSaveError, setStressSaveError] = useState('');
   const stressLogsCarouselRef = useRef(null);
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      const guestMode = localStorage.getItem('guestMode') === 'true';
+      if (user) localStorage.removeItem('guestMode');
+      setIsAppLoggedIn(Boolean(user) && !guestMode);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // Categories state (editable/extensible)
   const [categories, setCategories] = useState(INITIAL_CATEGORIES);
   const [selectedCategory, setSelectedCategory] = useState(INITIAL_CATEGORIES[0]);
@@ -78,7 +123,7 @@ export default function Calendar() {
   // Custom Category Creator state
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCatName, setNewCatName] = useState('');
-  const [newCatColor, setNewCatColor] = useState('#8B5CF6');
+  const [newCatColor, setNewCatColor] = useState('#23526D');
 
   // Form state for creating a Google Calendar event
   const [eventTitle, setEventTitle] = useState('');
@@ -206,6 +251,7 @@ export default function Calendar() {
 
         syncedEvents.push(...(data.items || []).map((event) => ({
           ...event,
+          categoryColor: GOOGLE_EVENT_COLORS[event.colorId],
           googleAccountEmail: calendarEmail,
         })));
         pageToken = data.nextPageToken;
@@ -294,7 +340,7 @@ export default function Calendar() {
     const newCategoryObj = {
       name: newCatName.trim(),
       color: newCatColor,
-      googleColorId: '1' // Fallback Google color ID
+      googleColorId: getClosestGoogleEventColorId(newCatColor),
     };
 
     setCategories([...categories, newCategoryObj]);
@@ -321,16 +367,17 @@ export default function Calendar() {
       return `${datePart}T${timePart}:00`;
     };
 
+    const requestedColorId = String(selectedCategory.googleColorId);
     const newEvent = {
       summary: `${eventTitle} [${selectedCategory.name}]`,
-      colorId: selectedCategory.googleColorId,
+      colorId: requestedColorId,
       start: { dateTime: toLocalDateTime(start), timeZone },
       end: { dateTime: toLocalDateTime(end), timeZone },
     };
 
     if (isSignedIn && calendarAccessToken) {
       try {
-        const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?fields=id,colorId', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${calendarAccessToken}`,
@@ -342,6 +389,25 @@ export default function Calendar() {
         if (!response.ok) {
           throw new Error(data.error?.message || 'Could not add the event to Google Calendar.');
         }
+
+        if (data.id && data.colorId !== requestedColorId) {
+          const colorResponse = await fetch(
+            `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(data.id)}`,
+            {
+              method: 'PATCH',
+              headers: {
+                Authorization: `Bearer ${calendarAccessToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ colorId: requestedColorId }),
+            }
+          );
+          const colorData = await colorResponse.json();
+          if (!colorResponse.ok) {
+            throw new Error(colorData.error?.message || 'The event was created, but its Google Calendar color could not be updated.');
+          }
+        }
+
         await fetchGoogleEvents();
       } catch (err) {
         console.error('Error creating event on Google Calendar', err);
@@ -433,8 +499,9 @@ export default function Calendar() {
       <div className="CalendarPage">
         {/* Header */}
         <header className="CalendarHeader">
-          <ProfileButton />
+          {isAppLoggedIn && <ProfileButton />}
           <div className="pageHeaderBar">
+            {!isAppLoggedIn && <BackButton />}
             <h1 className="CalendarTitle pageTitle">Calendar</h1>
           </div>
         </header>
@@ -486,7 +553,7 @@ export default function Calendar() {
                   key={index} 
                   className={`CalendarCell ${isSelected ? 'SelectedCell' : ''} ${isToday ? 'TodayCell' : ''}`}
                   style={{
-                    border: isToday ? '2px solid rgb(133, 86, 60)' : undefined,
+                    border: isToday ? '2px solid var(--palette-navy)' : undefined,
                     overflow: 'hidden',
                     position: 'relative'
                   }}
@@ -509,7 +576,7 @@ export default function Calendar() {
                           className="EventPill" 
                           style={{ 
                             backgroundColor: bgColor, 
-                            color: '#fff', 
+                            color: 'var(--palette-ice)', 
                             fontSize: '9px', 
                             padding: '1px 4px', 
                             borderRadius: '3px', 
@@ -540,7 +607,7 @@ export default function Calendar() {
             }} 
             aria-label="Add Event / Log Options"
           >
-            <Plus size={30} color="#FFF" />
+            <Plus size={30} color="var(--palette-ice)" />
           </button>
         </div>
 
@@ -549,18 +616,18 @@ export default function Calendar() {
           <div className="ModalOverlay">
             <div className="ModalContent">
               <button className="CloseButton" onClick={() => setIsDayDetailOpen(false)}>
-                <X size={18} color="#666" />
+                <X size={18} color="var(--palette-ink)" />
               </button>
 
               <div className="ModalBody">
-                <h3 style={{ marginBottom: '4px', fontSize: '16px', color: '#333' }}>
+                <h3 style={{ marginBottom: '4px', fontSize: '16px', color: 'var(--palette-ink)' }}>
                   {selectedGridDate}
                 </h3>
 
                 <section className="DayCategorySection" aria-labelledby="events-heading">
                   <h4 id="events-heading">Events</h4>
                 {selectedDayEvents.length === 0 ? (
-                  <p style={{ fontSize: '13px', color: '#777', marginBottom: '15px' }}>No events scheduled for this day.</p>
+                  <p style={{ fontSize: '13px', color: 'var(--palette-ink)', marginBottom: '15px' }}>No events scheduled for this day.</p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '15px', maxHeight: '180px', overflowY: 'auto' }}>
                     {selectedDayEvents.map((ev, idx) => {
@@ -583,7 +650,7 @@ export default function Calendar() {
                         <div 
                           key={ev.id || idx} 
                           style={{ 
-                            backgroundColor: '#f9f9f9', 
+                            backgroundColor: 'var(--palette-ice)', 
                             borderLeft: `4px solid ${bgColor}`, 
                             padding: '8px 10px', 
                             borderRadius: '4px',
@@ -593,17 +660,17 @@ export default function Calendar() {
                           }}
                         >
                           <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', marginRight: '8px' }}>
-                            <span style={{ fontSize: '13px', fontWeight: '500', color: '#222', wordBreak: 'break-word' }}>
+                            <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--palette-ink)', wordBreak: 'break-word' }}>
                               {ev.summary}
                             </span>
                             {timeDisplay && (
-                              <span style={{ fontSize: '11px', color: '#666', display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
+                              <span style={{ fontSize: '11px', color: 'var(--palette-ink)', display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
                                 <Clock size={11} /> {timeDisplay}
                               </span>
                             )}
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                            <span style={{ fontSize: '10px', backgroundColor: bgColor, color: '#fff', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                            <span style={{ fontSize: '10px', backgroundColor: bgColor, color: 'var(--palette-ice)', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
                               {matchedCat.name}
                             </span>
                             <button
@@ -700,7 +767,7 @@ export default function Calendar() {
           <div className="ModalOverlay StressQuizOverlay">
             <div className="ModalContent StressQuizModal" role="dialog" aria-modal="true" aria-labelledby="stress-quiz-title">
               <button className="CloseButton" onClick={() => setIsStressQuizOpen(false)} aria-label="Close symptom log">
-                <X size={18} color="#666" />
+                <X size={18} color="var(--palette-ink)" />
               </button>
               <div className="StressQuizContent">
                 <span className="StressQuizEyebrow">{selectedGridDate}</span>
@@ -787,7 +854,7 @@ export default function Calendar() {
           <div className="ModalOverlay">
             <div className="ModalContent">
               <button className="CloseButton" onClick={() => setIsPopupOpen(false)}>
-                <X size={18} color="#666" />
+                <X size={18} color="var(--palette-ink)" />
               </button>
 
               <div className="ModalBody">
@@ -801,23 +868,23 @@ export default function Calendar() {
                   />
                   
                   <div style={{ margin: '10px 0' }}>
-                    <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px' }}>Event Date:</label>
+                    <label style={{ fontSize: '12px', color: 'var(--palette-ink)', display: 'block', marginBottom: '4px' }}>Event Date:</label>
                     <input 
                       type="date" 
                       value={eventDate} 
                       onChange={(e) => setEventDate(e.target.value)}
-                      style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+                      style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--palette-sage)' }}
                     />
                   </div>
 
                   {/* Time Picker */}
                   <div style={{ margin: '10px 0' }}>
-                    <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px' }}>Event Time:</label>
+                    <label style={{ fontSize: '12px', color: 'var(--palette-ink)', display: 'block', marginBottom: '4px' }}>Event Time:</label>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <select 
                         value={eventHour} 
                         onChange={(e) => setEventHour(e.target.value)}
-                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid var(--palette-sage)' }}
                       >
                         {Array.from({ length: 12 }, (_, i) => i + 1).map((hr) => (
                           <option key={hr} value={String(hr).padStart(2, '0')}>
@@ -829,7 +896,7 @@ export default function Calendar() {
                       <select 
                         value={eventMinute} 
                         onChange={(e) => setEventMinute(e.target.value)}
-                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid var(--palette-sage)' }}
                       >
                         {['00', '15', '30', '45'].map((min) => (
                           <option key={min} value={min}>
@@ -840,7 +907,7 @@ export default function Calendar() {
                       <select 
                         value={eventAmPm} 
                         onChange={(e) => setEventAmPm(e.target.value)}
-                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid var(--palette-sage)' }}
                       >
                         <option value="AM">AM</option>
                         <option value="PM">PM</option>
@@ -850,7 +917,7 @@ export default function Calendar() {
 
                   {/* Editable Extended Pill Category Picker */}
                   <div style={{ margin: '12px 0' }}>
-                    <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>Category / Group:</label>
+                    <label style={{ fontSize: '12px', color: 'var(--palette-ink)', display: 'block', marginBottom: '6px' }}>Category / Group:</label>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
                       {categories.map((cat) => {
                         const isSelected = selectedCategory.name === cat.name;
@@ -861,8 +928,8 @@ export default function Calendar() {
                             onClick={() => setSelectedCategory(cat)}
                             style={{
                               backgroundColor: cat.color,
-                              color: '#fff',
-                              border: isSelected ? '2.5px solid #333' : '2px solid transparent',
+                              color: 'var(--palette-ice)',
+                              border: isSelected ? '2.5px solid var(--palette-ink)' : '2px solid transparent',
                               borderRadius: '16px',
                               padding: '4px 10px',
                               fontSize: '11px',
@@ -870,7 +937,7 @@ export default function Calendar() {
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
-                              boxShadow: isSelected ? '0 0 0 1px #fff' : 'none'
+                              boxShadow: isSelected ? '0 0 0 1px var(--palette-ice)' : 'none'
                             }}
                           >
                             {cat.name}
@@ -883,8 +950,8 @@ export default function Calendar() {
                         type="button"
                         onClick={() => setIsAddingCategory(true)}
                         style={{
-                          backgroundColor: '#e5e7eb',
-                          color: '#374151',
+                          backgroundColor: 'var(--palette-ice)',
+                          color: 'var(--palette-navy)',
                           border: 'none',
                           borderRadius: '50%',
                           width: '26px',
@@ -904,17 +971,17 @@ export default function Calendar() {
 
                   {/* Sub-modal or inline form for adding new group */}
                   {isAddingCategory && (
-                    <div style={{ background: '#f3f4f6', padding: '10px', borderRadius: '6px', marginBottom: '12px' }}>
+                    <div style={{ background: 'var(--palette-ice)', padding: '10px', borderRadius: '6px', marginBottom: '12px' }}>
                       <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>Create New Group</div>
                       <input 
                         type="text" 
                         placeholder="Group name..." 
                         value={newCatName} 
                         onChange={(e) => setNewCatName(e.target.value)}
-                        style={{ width: '100%', padding: '5px', marginBottom: '6px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px' }}
+                        style={{ width: '100%', padding: '5px', marginBottom: '6px', borderRadius: '4px', border: '1px solid var(--palette-sage)', fontSize: '12px' }}
                       />
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '11px', color: '#666' }}>Color:</span>
+                        <span style={{ fontSize: '11px', color: 'var(--palette-ink)' }}>Color:</span>
                         <input 
                           type="color" 
                           value={newCatColor} 
@@ -947,11 +1014,11 @@ export default function Calendar() {
           <div className="ModalOverlay">
             <div className="ModalContent" style={{ textAlign: 'center', padding: '20px' }}>
               <h3>Connect Google Calendar</h3>
-              <p style={{ fontSize: '13px', color: '#666', margin: '10px 0' }}>
+              <p style={{ fontSize: '13px', color: 'var(--palette-ink)', margin: '10px 0' }}>
                 Sign in with your Google account to sync events to your Google Calendar.
               </p>
               {authError && (
-                <p role="alert" style={{ fontSize: '13px', color: '#a12622', margin: '10px 0' }}>
+                <p role="alert" style={{ fontSize: '13px', color: 'var(--palette-navy)', margin: '10px 0' }}>
                   {authError}
                 </p>
               )}
@@ -973,7 +1040,7 @@ export default function Calendar() {
         )}
       </div>
 
-      {/* Navigation Bar Fixed Outside Page Scroll Flow */}
+
       <div className="FixedNavBarWrapper">
         <NavBar />
       </div>

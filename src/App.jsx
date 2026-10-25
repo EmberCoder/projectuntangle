@@ -1,4 +1,4 @@
-import { House } from 'lucide-react';
+import { CalendarDays, ChevronRight, House } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import './App.css';
@@ -21,6 +21,44 @@ import SignUp from './SignUp';
 import { getLocalDateKey, saveStressLog } from './stressLogs';
 import Todo from './todo';
 
+const readStoredEvents = (key) => {
+  try {
+    const events = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(events) ? events : [];
+  } catch {
+    return [];
+  }
+};
+
+const readUpcomingEvent = () => {
+  const appEvents = readStoredEvents('projectUntangle.appCalendarEvents');
+  const legacyEvents = appEvents.length
+    ? []
+    : readStoredEvents('projectUntangle.calendarEvents').filter((event) => !event.htmlLink);
+  const linkedEmail = localStorage.getItem('projectUntangle.googleCalendarLinkedEmail');
+  const googleEvents = linkedEmail
+    ? readStoredEvents(`projectUntangle.googleCalendarEvents.${encodeURIComponent(linkedEmail.trim().toLowerCase())}`)
+    : [];
+  const currentTime = Date.now();
+
+  return [...appEvents, ...legacyEvents, ...googleEvents]
+    .map((event) => {
+      const startValue = event.start?.dateTime || (event.start?.date && `${event.start.date}T00:00:00`);
+      const startDate = startValue ? new Date(startValue) : null;
+      return { event, startDate };
+    })
+    .filter(({ startDate }) => startDate && !Number.isNaN(startDate.getTime()) && startDate.getTime() >= currentTime)
+    .sort((first, second) => first.startDate - second.startDate)[0] || null;
+};
+
+const formatEventDate = (date) => new Intl.DateTimeFormat(undefined, {
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+}).format(date);
+
 function Home() {
   const [scale, setScale] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -29,6 +67,7 @@ function Home() {
   const [showGuestPopup, setShowGuestPopup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
   const [username, setUsername] = useState('Name');
+  const [upcomingEvent] = useState(readUpcomingEvent);
 
   const location = useLocation();
 
@@ -90,6 +129,27 @@ function Home() {
           <h1 className="Welcome pageTitle">Welcome back {username}!</h1>
         </div>
 
+        <section className="UpcomingEvents" aria-labelledby="upcoming-events-title">
+          <div className="UpcomingEventsHeading">
+            <CalendarDays size={20} aria-hidden="true" />
+            <h2 id="upcoming-events-title">Upcoming Events</h2>
+          </div>
+          {upcomingEvent ? (
+            <div className="UpcomingEventItem">
+              <p>{upcomingEvent.event.summary || 'Untitled event'}</p>
+              <time dateTime={upcomingEvent.startDate.toISOString()}>
+                {formatEventDate(upcomingEvent.startDate)}
+              </time>
+            </div>
+          ) : (
+            <p className="UpcomingEventsEmpty">No upcoming events</p>
+          )}
+          <Link className="UpcomingEventsLink" to="/calendar">
+            Open calendar
+            <ChevronRight size={18} aria-hidden="true" />
+          </Link>
+        </section>
+
         {showGuestPopup && (
           <GuestPopup setShowGuestPopup={setShowGuestPopup} />
         )}
@@ -136,13 +196,13 @@ function Home() {
           <Link
             to="/selfcare"
             style={{
-              backgroundColor: 'rgb(133, 86, 60)',
-              color: '#ffffff',
+              backgroundColor: 'var(--palette-navy)',
+              color: 'var(--palette-ice)',
               padding: '0.75rem 1.25rem',
               borderRadius: '0.5rem',
               textDecoration: 'none',
               fontWeight: '600',
-              fontFamily: 'Fredoka, sans-serif',
+              fontFamily: 'Google Sans Flex, sans-serif',
               display: 'inline-block',
             }}
           >

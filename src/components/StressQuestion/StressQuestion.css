@@ -1,10 +1,10 @@
 .QuestionText {
-    background-color: rgb(181, 155, 127);
+    background-color: var(--palette-beige);
     margin: 1rem;
     border-radius: 0.5rem;
     height: 25vh;
     font-size: 1.5rem;
-    color: black;
+    color: var(--palette-ink);
     padding: 1rem;
     display: inline-block;
     margin: 0;
@@ -27,7 +27,7 @@
 
 .scale input[type="radio"] {
     transform: scale(2.5);
-    accent-color: #62683F;
+    accent-color: var(--palette-navy);
 }
 
 @media (max-width: 600px) {
@@ -45,8 +45,8 @@
     height: 5vh;
     margin: 0 auto;
     font-size: 3vh;
-    color: rgb(133, 86, 60);
-    background-color: rgb(255, 242, 229);
+    color: var(--palette-ice);
+    background-color: var(--palette-navy);
 }
 
 .ExitButton {
@@ -55,13 +55,13 @@
     right: 1rem;
     display: inline-block;
     font-size: 1.5rem;
-    background: rgba(0,0,0,0);
-    border-color: rgba(0,0,0,0);
-    color: rgb(255, 242, 229);
+    background: rgba(35, 9, 3, 0);
+    border-color: rgba(35, 9, 3, 0);
+    color: var(--palette-ice);
 }
 
 .ErrorMessage {
-    color: red;
+    color: var(--palette-navy);
     font-size: 1rem;
     margin-top: 1rem;
     text-align: center;

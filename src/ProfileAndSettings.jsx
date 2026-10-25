@@ -11,17 +11,17 @@ const defaultProfileImage =
   'https://i.pinimg.com/236x/5a/bd/98/5abd985735a8fd4adcb0e795de6a1005.jpg?nii=t';
 
 const avatarOptions = [
-  { label: 'Peach', tint: '#f7d5b8', figure: '#865144' },
-  { label: 'Mint', tint: '#cfe8d7', figure: '#35604b' },
-  { label: 'Lavender', tint: '#d9d1f3', figure: '#5d4c79' },
-  { label: 'Sky', tint: '#cfe7f9', figure: '#365c78' },
-  { label: 'Sunset', tint: '#f8d6d6', figure: '#874851' },
+  { label: 'Deep blue', tint: '#23526D', figure: '#F5F1E8' },
+  { label: 'Sky blue', tint: '#C4EAF4', figure: '#23526D' },
+  { label: 'Warm ivory', tint: '#F5F1E8', figure: '#1E3B49' },
+  { label: 'Beige', tint: '#D6C1A5', figure: '#23526D' },
+  { label: 'Blue ink', tint: '#1E3B49', figure: '#C4EAF4' },
 ];
 
 const buildTintedGuestDefaultImage = (tint, figure) => `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
   <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
     <rect width="300" height="300" rx="150" fill="${tint}"/>
-    <circle cx="150" cy="150" r="116" fill="#fffaf4" fill-opacity="0.32"/>
+    <circle cx="150" cy="150" r="116" fill="#F5F1E8" fill-opacity="0.32"/>
     <circle cx="150" cy="108" r="39" fill="${figure}"/>
     <path d="M67 244c7-45 39-75 83-75s76 30 83 75c-23 20-52 31-83 31s-60-11-83-31z" fill="${figure}"/>
   </svg>
