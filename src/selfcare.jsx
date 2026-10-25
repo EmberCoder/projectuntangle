@@ -1,15 +1,21 @@
 import { ArrowSquareOut, MagnifyingGlass } from 'phosphor-react';
 import { useEffect, useState } from 'react';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
 import { auth } from './firebase';
 import './selfcareapp.css';
 
 export default function SelfCare() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
+  const [isGuestMode, setIsGuestMode] = useState(
+    () => localStorage.getItem('guestMode') === 'true'
+  );
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(Boolean(user));
+      setIsGuestMode(localStorage.getItem('guestMode') === 'true');
     });
 
     return () => unsubscribe();
@@ -73,7 +79,10 @@ export default function SelfCare() {
         paddingRight: '1.5rem',
       }}
     >
-      <h1 className="SelfCareHeader">Self Care Zone</h1>
+      <div className="pageHeaderBar">
+        {isLoggedIn && !isGuestMode ? <ProfileButton /> : <BackButton />}
+        <h1 className="SelfCareHeader pageTitle">Self Care Zone</h1>
+      </div>
       <p className="SelfCareSubheading">
         Find live meditation, breathing classes, yoga sessions, and mental health forums near you.
       </p>
