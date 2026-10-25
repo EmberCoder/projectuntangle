@@ -1,7 +1,7 @@
 import { signInWithPopup } from 'firebase/auth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, getOnboardingStatus, googleProvider, setOnboardingStatus } from '../../firebase';
+import { auth, authPersistenceReady, getOnboardingStatus, googleProvider, setOnboardingStatus } from '../../firebase';
 import './Login.css';
 
 const GoogleLogin = () => {
@@ -11,7 +11,10 @@ const GoogleLogin = () => {
   const handleGoogleSignIn = async () => {
     try {
       setError('');
+      await authPersistenceReady;
       const result = await signInWithPopup(auth, googleProvider);
+      localStorage.removeItem('guestMode');
+
       const user = result.user;
       const firstName = user.displayName ? user.displayName.split(' ')[0] : '';
       const userEmail = user.email?.trim().toLowerCase();
@@ -25,7 +28,7 @@ const GoogleLogin = () => {
         return;
       }
 
-      navigate('/home', { state: { username } });
+      navigate('/home');
     } catch (error) {
       console.error(error.message);
       setError(error.message);

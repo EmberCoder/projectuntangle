@@ -1,27 +1,31 @@
 import { onAuthStateChanged } from 'firebase/auth';
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
+import ProfileButton from './components/ProfileButton.jsx';
 import { auth, db } from './firebase';
 import './journal.css';
 
 function Journal() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
   const [journalMode, setJournalMode] = useState(null);
   const [journalText, setJournalText] = useState('');
   const [entries, setEntries] = useState([]);
   const [editingEntryId, setEditingEntryId] = useState(null);
   const [currentPrompt, setCurrentPrompt] = useState('');
   const [user, setUser] = useState(null);
+  const displayName = user?.displayName?.trim();
 
   const prompts = [
     'What is something that made you smile today?',
@@ -46,6 +50,7 @@ function Journal() {
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setIsLoggedIn(Boolean(currentUser));
 
       if (unsubscribeEntries) {
         unsubscribeEntries();
@@ -170,12 +175,9 @@ function Journal() {
 
   return (
     <div className="journalPage">
-      <div className="journalHeader">
-        <button className="journalHeaderButton">⚙</button>
-        <button className="journalHeaderButton">◯</button>
-      </div>
+      {isLoggedIn ? <ProfileButton /> : <BackButton />}
 
-      <h1 className="journalTitle">Journal</h1>
+      <h1 className="journalTitle pageTitle">Journal</h1>
 
       {!user && (
         <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
@@ -186,7 +188,9 @@ function Journal() {
       {journalMode === null && (
         <div className="journalHome">
           <div className="journalBook">
-            <div className="journalBookTitle">Your Journal</div>
+            <div className="journalBookTitle">
+              {displayName ? `${displayName}'s Journal` : 'Your Journal'}
+            </div>
 
             <button
               className="journalOptionButton"

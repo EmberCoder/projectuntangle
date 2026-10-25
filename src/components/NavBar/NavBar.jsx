@@ -1,14 +1,13 @@
-import { Link } from 'react-router-dom';
 import './NavBar.css';
 
 const NavBar = () => {
   return (
     <div className="navigation">
       <ul>
-        <li><a href="/calendar">C</a></li>
-        <li><a href="/todo">T</a></li>
-        <li><a href="/journal">J</a></li>
-        <li><a href="/grounding">G</a></li>
+        <li><a href="./calendar.jsx">C</a></li>
+        <li><a href="./tasks.jsx">T</a></li>
+        <li><a href="./journal.jsx">J</a></li>
+        <li><a href="./grounding.jsx">G</a></li>
         <li><a href="/selfcare">R</a></li>
       </ul>
     </div>
@@ -16,4 +15,3 @@ const NavBar = () => {
 }
 
 export default NavBar;
-

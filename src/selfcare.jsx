@@ -1,13 +1,14 @@
-import { MagnifyingGlass } from 'phosphor-react';
-import { useState } from 'react';
-import NavBar from './components/NavBar/NavBar';
+import React, { useState } from 'react';
 import './selfcareapp.css';
+import { MagnifyingGlass, ArrowSquareOut } from 'phosphor-react';
+import NavBar from './components/NavBar/NavBar';
 
 export default function SelfCare() {
   const [zipCode, setZipCode] = useState('');
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [activeZip, setActiveZip] = useState('');
+  const [cityName, setCityName] = useState('Austin');
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const hotlines = [
     { title: 'Suicide & Crisis Hotline', number: '988' },
@@ -20,43 +21,50 @@ export default function SelfCare() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    const cleanedZip = zipCode.trim();
+    const cleanZip = zipCode.trim();
+    if (cleanZip.length < 5) return;
 
-    if (cleanedZip !== '') {
-      setLoading(true);
-      setHasSearched(true);
+    setLoading(true);
+    setHasSearched(false);
 
-      try {
-        // Fetch events from your Node/Express backend (Option B)
-        const response = await fetch(`/api/events?zipCode=${encodeURIComponent(cleanedZip)}`);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch events from server');
-        }
-
+    try {
+      // Fetch real city data for ANY US zip code across the entire country
+      const response = await fetch(`https://api.zippopotam.us/us/${cleanZip}`);
+      
+      if (response.ok) {
         const data = await response.json();
-        setEvents(data);
-      } catch (error) {
-        console.error('Eventbrite API Fetch Error:', error);
-        setEvents([]);
-      } finally {
-        setLoading(false);
+        if (data.places && data.places.length > 0) {
+          setCityName(data.places[0]['place name']);
+        }
+      } else {
+        setCityName('Local Area');
       }
+    } catch (err) {
+      console.error('Error fetching zip data:', err);
+      setCityName('Local Area');
     }
+
+    setActiveZip(cleanZip);
+    setLoading(false);
+    setHasSearched(true);
   };
 
   return (
     <div
       className="SelfCarePage"
       style={{
-        paddingBottom: '80px', // Ensures content isn't covered by fixed bottom NavBar
+        paddingBottom: '12rem',
         minHeight: '100vh',
         boxSizing: 'border-box',
+        maxWidth: '800px',
+        margin: '0 auto',
+        paddingLeft: '1.5rem',
+        paddingRight: '1.5rem',
       }}
     >
       <h1 className="SelfCareHeader">Self Care Zone</h1>
       <p className="SelfCareSubheading">
-        Want to check out mental health events near you?
+        Find live meditation, breathing classes, yoga sessions, and mental health forums near you.
       </p>
 
       {/* Zip Code Search Form */}
@@ -70,7 +78,7 @@ export default function SelfCare() {
             type="text"
             value={zipCode}
             onChange={(e) => setZipCode(e.target.value)}
-            placeholder="e.g. 78717"
+            placeholder="e.g. 78681"
             className="ZipInput"
           />
           <button type="submit" className="SearchButton" aria-label="Submit search">
@@ -80,73 +88,108 @@ export default function SelfCare() {
       </form>
 
       {/* Results Section */}
-      <div className="ResultsSection">
-        {!hasSearched ? (
-          <p style={{ color: 'rgb(181, 155, 127)' }}>
-            search results...
+      <div className="ResultsSection" style={{ marginTop: '1.5rem' }}>
+        {loading ? (
+          <p style={{ color: 'rgb(133, 86, 60)', textAlign: 'center' }}>
+            Looking up location...
           </p>
-        ) : loading ? (
-          <p style={{ color: 'rgb(133, 86, 60)' }}>
-            Loading nearby places...
-          </p>
-        ) : events.length === 0 ? (
-          <p style={{ color: 'rgb(133, 86, 60)' }}>
-            No events found in this zip code.
+        ) : !hasSearched ? (
+          <p style={{ color: 'rgb(181, 155, 127)', textAlign: 'center' }}>
+            Enter your zip code above to explore live local sessions...
           </p>
         ) : (
-          <div
-            className="EventsGrid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-              gap: '1rem',
-              marginTop: '1rem',
-            }}
-          >
-            {events.map((evt) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <p style={{ color: 'rgb(133, 86, 60)', fontWeight: 'bold', marginBottom: '0.25rem' }}>
+              Live Wellness & Events for {cityName} ({activeZip})
+            </p>
+
+            {/* Eventbrite Link Card with 'yoga' search query and dynamic city location */}
+            <a
+              href={`https://www.eventbrite.com/d/--${cityName.toLowerCase().replace(/\s+/g, '-')}/yoga--events/?q=yoga`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <div
-                key={evt.id}
-                className="EventCard"
                 style={{
                   backgroundColor: '#ffffff',
-                  border: '2px solid rgb(133, 86, 60)',
+                  border: '1px solid rgb(133, 86, 60)',
                   borderRadius: '12px',
-                  padding: '1rem',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-                  textAlign: 'left',
+                  padding: '1.25rem 1.5rem',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(133, 86, 60, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.04)';
                 }}
               >
-                <h3
-                  className="EventTitle"
-                  style={{
-                    color: 'rgb(133, 86, 60)',
-                    fontSize: '1.2rem',
-                    margin: '0 0 0.5rem 0',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {evt.title}
-                </h3>
-                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
-                  <strong>Location:</strong> {evt.location}
-                </p>
-                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
-                  <strong>Date:</strong> {evt.date}
-                </p>
-                <p style={{ margin: '0.25rem 0', color: '#4a4a4a', fontSize: '0.95rem' }}>
-                  <strong>Time:</strong> {evt.time}
-                </p>
-                <p style={{ margin: '0.25rem 0 0 0', color: 'rgb(133, 86, 60)', fontWeight: 'bold' }}>
-                  <strong>Cost:</strong> {evt.cost}
-                </p>
+                <div>
+                  <h3 style={{ color: 'rgb(133, 86, 60)', fontSize: '1.15rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                    Browse Local Yoga & Wellness Classes on Eventbrite
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#555' }}>
+                    View real-time schedules, dates, and ticket bookings near {cityName} ({activeZip}).
+                  </p>
+                </div>
+                <ArrowSquareOut size={24} color="rgb(133, 86, 60)" />
               </div>
-            ))}
+            </a>
+
+            {/* NAMI Support Groups Link Card */}
+            <a
+              href="https://www.nami.org/findsupport"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  border: '1px solid rgb(133, 86, 60)',
+                  borderRadius: '12px',
+                  padding: '1.25rem 1.5rem',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(133, 86, 60, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.04)';
+                }}
+              >
+                <div>
+                  <h3 style={{ color: 'rgb(133, 86, 60)', fontSize: '1.15rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                    Find NAMI Mental Health Support Forums & Peer Meetings
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: '#555' }}>
+                    Connect with community mental health circles and discussion groups.
+                  </p>
+                </div>
+                <ArrowSquareOut size={24} color="rgb(133, 86, 60)" />
+              </div>
+            </a>
           </div>
         )}
       </div>
 
       {/* Therapy Support Resource */}
-      <div className="ResourceCard">
+      <div className="ResourceCard" style={{ marginTop: '2rem' }}>
         <p>
           Looking for extra support?{' '}
           <a
@@ -181,19 +224,29 @@ export default function SelfCare() {
         </div>
       </section>
 
-      {/* Fixed Bottom Navigation Bar */}
+      {/* Perfectly Centered & Sticky Bottom Navigation Bar */}
       <div
         style={{
           position: 'fixed',
           bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          backgroundColor: '#ffffff',
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingBottom: '1rem',
+          paddingTop: '0.75rem',
+          backgroundColor: 'rgba(253, 246, 238, 0.95)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          zIndex: 9999,
+          boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.05)',
         }}
       >
-        <NavBar />
+        <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'center' }}>
+          <NavBar />
+        </div>
       </div>
     </div>
   );
