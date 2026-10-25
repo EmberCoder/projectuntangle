@@ -16,7 +16,7 @@ button {
 .nameQuestion {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: rgb(139, 145, 97);
+    color: var(--palette-sage);
     float: left;
     margin-left: 1rem;
 }
@@ -25,31 +25,31 @@ button {
     width: 20rem;
     height: 4rem;
     border-radius: 0.5rem;
-    background-color: rgb(181, 155, 127);
+    background-color: var(--palette-navy);
     font-size: 2rem;
-    font-family: "Fredoka", sans-serif;
-    color: black;
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-ice);
 }
 
 .registerButton {
     width: 20rem;
     height: 4rem;
     border-radius: 0.5rem;
-    background-color: rgb(181, 155, 127);
+    background-color: var(--palette-navy);
     font-size: 2rem;
-    font-family: "Fredoka", sans-serif;
-    color: black;
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-ice);
 }
 
 .guestButton {
     width: 50%;
     height: 100%;
     border-radius: 0.5rem;
-    background-color: rgb(255, 242, 229);
-    border-color: rgb(255, 242, 229);
+    background-color: var(--palette-ice);
+    border-color: black;
     font-size: 1.25rem;
-    font-family: "Fredoka", sans-serif;
-    color: rgb(139, 145, 97);
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-sage);
     font-weight: 600;
 }
 
@@ -59,8 +59,8 @@ button {
     width: 12rem;
     align-items: center;
     justify-content: right;
-    background-color: #ffffff;
-    color: #1f1f1f;
+    background-color: var(--palette-ice);
+    color: var(--palette-ink);
     font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -73,10 +73,10 @@ button {
     width: 20rem;
     height: 2.5rem;
     border-radius: 0.5rem;
-    border: 1px solid rgb(181, 155, 127);
+    border: 1px solid var(--palette-sage);
     padding: 0.5rem;
     font-size: 1rem;
-    font-family: "Fredoka", sans-serif;
+    font-family: "Google Sans Flex", sans-serif;
     margin-bottom: 1rem;
     background-color: white;
 }
@@ -90,7 +90,7 @@ button {
 
 .birthDateHelp {
     margin: 0 1rem 0.75rem;
-    color: #5c554a;
+    color: var(--palette-ink);
     font-size: 0.95rem;
 }
 
@@ -106,8 +106,8 @@ button {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    color: #4d463f;
-    font-family: "Fredoka", sans-serif;
+    color: var(--palette-ink);
+    font-family: "Google Sans Flex", sans-serif;
     font-size: 0.9rem;
 }
 
@@ -116,11 +116,11 @@ button {
     width: 100%;
     height: 2.75rem;
     padding: 0.5rem;
-    border: 1px solid rgb(181, 155, 127);
+    border: 1px solid var(--palette-sage);
     border-radius: 0.5rem;
-    background: #fff;
-    color: #2a2a2a;
-    font: 1rem "Fredoka", sans-serif;
+    background: var(--palette-ice);
+    color: var(--palette-ink);
+    font: 1rem "Google Sans Flex", sans-serif;
 }
 
 .goal-options {
@@ -137,16 +137,16 @@ button {
     text-align: left;
     padding: 0.85rem 1rem;
     border-radius: 0.75rem;
-    border: 1px solid rgb(181, 155, 127);
-    background: #fff;
-    color: #2a2a2a;
-    font-family: "Fredoka", sans-serif;
+    border: 1px solid var(--palette-sage);
+    background: var(--palette-ice);
+    color: var(--palette-ink);
+    font-family: "Google Sans Flex", sans-serif;
     cursor: pointer;
 }
 
 .goal-option.selected {
-    background: rgb(255, 242, 229);
-    border-color: rgb(139, 145, 97);
+    background: var(--palette-ice);
+    border-color: var(--palette-sage);
 }
 
 .toggle-row {
@@ -157,8 +157,8 @@ button {
     max-width: 22rem;
     min-height: 2.75rem;
     margin: 0 0 1rem 1rem;
-    font-family: "Fredoka", sans-serif;
-    color: rgb(139, 145, 97);
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-sage);
 }
 
 .toggle {
@@ -170,14 +170,14 @@ button {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
-    background: #d8d8d8;
+    background: var(--palette-ice);
     cursor: pointer;
     padding: 0.2rem;
     margin: 0;
 }
 
 .toggle.on {
-    background: rgb(181, 155, 127);
+    background: var(--palette-sage);
 }
 
 .toggle-thumb {
@@ -202,16 +202,16 @@ button {
     margin-left: 1rem;
     min-width: 0;
     padding: 0.75rem;
-    border: 1px solid rgb(181, 155, 127);
+    border: 1px solid var(--palette-sage);
     border-radius: 0.75rem;
-    background: #fffaf6;
-    color: #2a2a2a;
+    background: var(--palette-ice);
+    color: var(--palette-ink);
 }
 
 .privacy-box-title {
     margin: 0 0 0.5rem;
-    color: rgb(105, 83, 62);
-    font-family: "Fredoka", sans-serif;
+    color: var(--palette-navy);
+    font-family: "Google Sans Flex", sans-serif;
     font-size: 1.1rem;
 }
 
@@ -227,7 +227,7 @@ button {
     scrollbar-gutter: stable;
     overflow-wrap: anywhere;
     padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-    color: #2a2a2a;
+    color: var(--palette-ink);
     font-size: 0.9rem;
     line-height: 1.5;
     text-align: left;
@@ -235,8 +235,8 @@ button {
 
 .privacy-policy-scroll h4 {
     margin: 1rem 0 0.35rem;
-    color: rgb(105, 83, 62);
-    font-family: "Fredoka", sans-serif;
+    color: var(--palette-navy);
+    font-family: "Google Sans Flex", sans-serif;
     font-size: 1rem;
 }
 
@@ -264,7 +264,7 @@ button {
 }
 
 .privacy-policy-scroll a {
-    color: rgb(110, 75, 54);
+    color: var(--palette-navy);
     overflow-wrap: anywhere;
 }
 
@@ -273,8 +273,8 @@ button {
     align-items: center;
     gap: 0.75rem;
     margin: 1rem 0 0 1rem;
-    font-family: "Fredoka", sans-serif;
-    color: #2a2a2a;
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-ink);
 }
 
 .checkbox-row input {
@@ -286,10 +286,10 @@ button {
     width: 10rem;
     height: 2rem;
     border-radius: 0.5rem;
-    background-color: rgb(181, 155, 127);
+    background-color: var(--palette-sage);
     font-size: 1rem;
-    font-family: "Fredoka", sans-serif;
-    color: black;
+    font-family: "Google Sans Flex", sans-serif;
+    color: var(--palette-ink);
 }
 
 .backButton {
@@ -298,7 +298,7 @@ button {
     border: none;
     font-size: 1.5rem;
     margin: 0 0 1rem 1rem;
-    color: rgb(181, 155, 127);
+    color: var(--palette-sage);
     font-weight: 600;
     text-decoration: none;
 }
@@ -316,11 +316,11 @@ button {
 }
 
 input {
-    color: black;
+    color: var(--palette-ink);
 }
 
 .error {
-    color: red;
+    color: var(--palette-navy);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -328,7 +328,7 @@ input {
 .emailAuthSuggestion {
     display: inline-block;
     margin: 0 0 1rem;
-    color: rgb(133, 86, 60);
+    color: var(--palette-navy);
     font-weight: 600;
 }
 
@@ -353,7 +353,7 @@ input {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #d0ded5; 
+  background-color: var(--palette-ice); 
   cursor: pointer;
   display: inline-block;
   transition: all 0.3s ease;
@@ -362,15 +362,15 @@ input {
 .dot.active {
   width: 24px;
   border-radius: 4px;
-  background-color: #52796f; 
+  background-color: var(--palette-sage); 
 }
 
 .primary-btn, .secondary-btn {
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--palette-sage);
+  background-color: var(--palette-ice);
   margin: 0;
 }
 

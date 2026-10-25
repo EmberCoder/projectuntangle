@@ -3,24 +3,24 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(181, 155, 127);
+    background-color: var(--palette-sage);
     padding: 2rem;
     border-radius: 0.5rem;
     width: 80%;
     max-width: 400px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(35, 9, 3, 0.2);
     z-index: 1000;
 }
 
 .guestPopupTitle {
     font-size: 1.75rem;
-    color: black;
+    color: var(--palette-ink);
     margin-bottom: 1rem;
 }
 
 .guestPopup p {
     font-size: 1rem;
-    color: black;
+    color: var(--palette-ink);
     margin-bottom: 1.5rem;
 }

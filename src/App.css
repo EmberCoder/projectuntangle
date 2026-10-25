@@ -1,8 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
-
-* {
+- {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -13,47 +9,118 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   min-height: 100vh;
-  background-color: rgb(255, 242, 229);
+  background-color: var(--palette-sage);
   width: 100%;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 h1 {
   line-height: 1.2;
   text-align: left;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   font-weight: 600;
   font-size: 4rem;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
   margin-left: 1rem;
   margin-top: 4rem;
 }
 
 .StressQuestion {
-  background-color: rgb(181, 155, 127);
-  margin: 1rem;
+  background-color: var(--palette-sky);
+  margin: 1.5rem 1rem;
   border-radius: 0.5rem;
   height: 8rem;
   font-size: 1.5rem;
 }
 
 .Welcome {
-  padding-bottom: 14rem;
-  padding-top: 2rem;
+  padding: 0;
 }
 
 .HomepageContent {
-    padding-bottom: 15vh;
+  min-height: 100svh;
+  padding-bottom: 7rem;
+  background-color: var(--palette-sky);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.HomepageContent .pageHeaderBar {
+  background-color: var(--palette-sky);
+  margin-bottom: 1rem;
+}
+
+.UpcomingEvents {
+  width: calc(100% - 2rem);
+  max-width: 32rem;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  border: 1px solid var(--palette-beige);
+  border-radius: 8px;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  text-align: left;
+}
+
+.UpcomingEventsHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+  color: var(--palette-navy);
+}
+
+.UpcomingEventsHeading h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.UpcomingEventItem p {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.UpcomingEventItem time,
+.UpcomingEventsEmpty {
+  color: var(--palette-ink);
+  font-size: 0.9rem;
+}
+
+.UpcomingEventsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.8rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--palette-navy);
+  border-radius: 6px;
+  background: var(--palette-navy);
+  color: var(--palette-ice);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.UpcomingEventsLink:hover {
+  background: var(--palette-sage);
+  transform: translateY(-1px);
+}
+
+.UpcomingEventsLink:focus-visible {
+  outline: 2px solid var(--palette-navy);
+  outline-offset: 3px;
 }
 
 .StressLogAgainButton {
-  margin: 1rem;
+  margin: 1.5rem 1rem;
   padding: 0.7rem 1rem;
-  border: 1px solid rgb(133, 86, 60);
+  border: 1px solid var(--palette-navy);
   border-radius: 5px;
-  background: #fff;
-  color: rgb(133, 86, 60);
-  font: 600 0.95rem "Fredoka", sans-serif;
+  background: var(--palette-ice);
+  color: var(--palette-navy);
+  font: 600 0.95rem "Google Sans Flex", sans-serif;
   cursor: pointer;
 }
 
@@ -71,20 +138,20 @@ h1 {
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
   text-decoration: none;
   transition: background-color 140ms ease;
 }
 
 .AppHomeButton:hover {
-  background: rgba(181, 155, 127, 0.2);
+  background: rgba(145, 179, 193, 0.2);
 }
 
 .AppHomeButton:visited {
-  color: rgb(133, 86, 60);
+  color: var(--palette-navy);
 }
 
 .AppHomeButton:focus-visible {
-  outline: 2px solid rgb(133, 86, 60);
+  outline: 2px solid var(--palette-navy);
   outline-offset: 2px;
 }

@@ -3,9 +3,9 @@
   min-height: 100vh;
   box-sizing: border-box;
   padding: 0 20px 115px;
-  background-color: #fff2e5;
-  color: #3a3a32;
-  font-family: "Fredoka", sans-serif;
+  background-color: var(--palette-sky);
+  color: var(--palette-ink);
+  font-family: "Google Sans Flex", sans-serif;
 }
 
 .breathingHeaderBar {
@@ -17,7 +17,7 @@
   align-items: flex-start;
   gap: 0.5rem;
   padding: 1rem 1rem 0.5rem;
-  background: rgba(255, 242, 229, 0.96);
+  background: var(--palette-sky);
   backdrop-filter: blur(4px);
   border-bottom: none;
 }
@@ -30,7 +30,7 @@
 
 .breathingTitle {
   margin: 0;
-  color: #995f7d;
+  color: var(--palette-navy);
   font-weight: 600;
 }
 
@@ -57,7 +57,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: #3a3a32;
+  color: var(--palette-ink);
   font-size: 29px;
   cursor: pointer;
 }
@@ -65,7 +65,7 @@
 .profileButton {
   width: 32px;
   height: 32px;
-  border: 2px solid #3a3a32;
+  border: 2px solid var(--palette-ink);
   border-radius: 50%;
   font-size: 25px;
 }
@@ -80,7 +80,7 @@
 
 .breathingQuestion {
   margin: 18px 0 28px;
-  color: #995f7d;
+  color: var(--palette-navy);
   font-size: clamp(1.4rem, 5vw, 2rem);
   font-weight: 600;
   text-align: center;
@@ -96,20 +96,20 @@
   box-sizing: border-box;
   padding: 22px 18px;
   border-radius: 22px;
-  background-color: #fffaf5;
-  box-shadow: 0 3px 8px rgba(58, 58, 50, 0.08);
+  background-color: var(--palette-ice);
+  box-shadow: 0 3px 8px rgba(44, 62, 70, 0.08);
 }
 
 .breathingExerciseName {
   margin: 0;
-  color: #85563c;
+  color: var(--palette-navy);
   font-size: 1.3rem;
   text-align: center;
 }
 
 .breathingDescription {
   margin: 8px 0 16px;
-  color: #6b6259;
+  color: var(--palette-ink);
   font-size: 0.9rem;
   text-align: center;
   line-height: 1.5;
@@ -124,7 +124,7 @@
   height: 210px;
   margin: 5px 0;
   border-radius: 50%;
-  background-color: #f8e6ef;
+  background-color: var(--palette-ice);
 }
 
 .breathingShape {
@@ -134,13 +134,13 @@
   width: 115px;
   height: 115px;
   border-radius: 50%;
-  background-color: #dca8c4;
-  box-shadow: 0 4px 14px rgba(153, 95, 125, 0.18);
+  background-color: var(--palette-navy);
+  box-shadow: 0 4px 14px rgba(59, 92, 112, 0.18);
   transform: scale(0.75);
 }
 
 .breathingShape .breathingCountdown {
-  color: #fffaf5;
+  color: var(--palette-ice);
   font-size: 2rem;
   font-weight: 600;
 }
@@ -223,13 +223,13 @@
 }
 
 .breathingPhase {
-  color: #995f7d;
+  color: var(--palette-navy);
   font-size: 1.2rem;
   font-weight: 600;
 }
 
 .breathingSeconds {
-  color: #85563c;
+  color: var(--palette-navy);
   font-size: 0.9rem;
 }
 
@@ -246,7 +246,7 @@
 .breathingGenerateButton {
   border: none;
   border-radius: 22px;
-  font-family: "Fredoka", sans-serif;
+  font-family: "Google Sans Flex", sans-serif;
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -254,23 +254,23 @@
 .breathingMainButton {
   min-width: 100px;
   padding: 10px 22px;
-  background-color: #995f7d;
-  color: #fff2e5;
+  background-color: var(--palette-navy);
+  color: var(--palette-ice);
   font-size: 1rem;
 }
 
 .breathingSecondaryButton {
   padding: 10px 22px;
-  background-color: #e7b5d1;
-  color: #85563c;
+  background-color: var(--palette-sage);
+  color: var(--palette-navy);
   font-size: 1rem;
 }
 
 .breathingGenerateButton {
   margin-top: 24px;
   padding: 10px 20px;
-  background-color: #e7b5d1;
-  color: #85563c;
+  background-color: var(--palette-sage);
+  color: var(--palette-navy);
   font-size: 0.9rem;
 }
 
@@ -289,7 +289,7 @@
 .breathingHint {
   max-width: 300px;
   margin: 16px 0 0;
-  color: #6b6259;
+  color: var(--palette-ink);
   font-size: 0.8rem;
   line-height: 1.5;
   text-align: center;

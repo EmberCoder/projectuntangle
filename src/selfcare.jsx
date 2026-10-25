@@ -75,15 +75,15 @@ export default function SelfCare() {
       {/* Results Section */}
       <div className="ResultsSection">
         {!hasSearched ? (
-          <p style={{ color: 'rgb(181, 155, 127)' }}>
+          <p style={{ color: 'var(--palette-sage)' }}>
             search results...
           </p>
         ) : loading ? (
-          <p style={{ color: 'rgb(133, 86, 60)' }}>
+          <p style={{ color: 'var(--palette-navy)' }}>
             Loading nearby places...
           </p>
         ) : events.length === 0 ? (
-          <p style={{ color: 'rgb(133, 86, 60)' }}>
+          <p style={{ color: 'var(--palette-navy)' }}>
             No events found in this zip code.
           </p>
         ) : (
@@ -119,7 +119,7 @@ export default function SelfCare() {
 
       {/* Hotlines Section */}
       <section style={{ marginTop: '2.5rem', marginBottom: '3rem' }}>
-        <h2 style={{ color: 'rgb(133, 86, 60)', fontSize: '2rem', marginBottom: '0.5rem' }}>
+        <h2 style={{ color: 'var(--palette-navy)', fontSize: '2rem', marginBottom: '0.5rem' }}>
           Hotlines & Help
         </h2>
         <p className="SelfCareSubheading">
