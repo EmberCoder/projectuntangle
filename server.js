@@ -24,7 +24,7 @@ app.get('/api/events', async (req, res) => {
   try {
     const encodedZip = encodeURIComponent(zipCode);
     const tmUrl = `https://app.ticketmaster.com/discovery/v2/events.json?postalCode=${encodedZip}&radius=50&unit=miles&keyword=wellness&apikey=${apiKey}`;
-    
+
     let response = await fetch(tmUrl);
     if (!response.ok) {
       throw new Error(`Ticketmaster API returned status ${response.status}`);
