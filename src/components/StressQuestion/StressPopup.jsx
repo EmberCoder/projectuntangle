@@ -11,7 +11,7 @@ const StressPopup = ({ scale, setShowPopup, setShowQuestion }) => {
     return (
         <div className="StressSection">
             <h2>You rated your stress a {scale}/5. Would you like to try...</h2>
-            <ExitButton onClick={() => setShowPopup(false)} />
+            <ExitButton onClick={handleClose} />
             <button className="OptionButtons">A Breathing Exercise</button> <br />
             <Link className="OptionButtons" to="/journal">Journaling</Link> <br />
             <button className="OptionButtons">A Grounding Exercise</button>

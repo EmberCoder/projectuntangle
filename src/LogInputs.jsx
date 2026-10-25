@@ -10,7 +10,7 @@ const LogInputs = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const isSignUp = false;
   const [error, setError] = useState('');
 
   const handleEmailAuth = async (e) => {

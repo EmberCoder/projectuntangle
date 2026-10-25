@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { Plus, X, Settings, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import './Calendar.css';
 import NavBar from './components/NavBar/NavBar';
+
+/* global gapi */
 
 // Initial default categories
 const INITIAL_CATEGORIES = [
@@ -13,6 +15,7 @@ const INITIAL_CATEGORIES = [
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const currentDateRef = useRef(currentDate);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDayDetailOpen, setIsDayDetailOpen] = useState(false);
   const [selectedGridDate, setSelectedGridDate] = useState(null);
@@ -37,26 +40,26 @@ export default function Calendar() {
   const [eventMinute, setEventMinute] = useState('00');
   const [eventAmPm, setEventAmPm] = useState('PM');
 
-  // Google API Client Setup
   useEffect(() => {
-    /* global gapi */
-    const loadGapi = () => {
-      if (typeof gapi !== 'undefined') {
-        gapi.load('client:auth2', initGapiClient);
-      } else {
-        setTimeout(loadGapi, 300);
-      }
-    };
-    loadGapi();
+    currentDateRef.current = currentDate;
+  }, [currentDate]);
+
+  const fetchGoogleEvents = useCallback(async (date) => {
+    try {
+      const response = await gapi.client.calendar.events.list({
+        calendarId: 'primary',
+        timeMin: new Date(date.getFullYear(), date.getMonth(), 1).toISOString(),
+        timeMax: new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString(),
+        showDeleted: false,
+        singleEvents: true,
+      });
+      setEvents(response.result.items || []);
+    } catch (err) {
+      console.error('Error fetching events', err);
+    }
   }, []);
 
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchGoogleEvents();
-    }
-  }, [currentDate, isSignedIn]);
-
-  const initGapiClient = async () => {
+  const initGapiClient = useCallback(async () => {
     try {
       await gapi.client.init({
         apiKey: 'AIzaSyAweTv9HK6OqncBM5kg3OkMJFJ0f3gOLl8',
@@ -72,7 +75,7 @@ export default function Calendar() {
       if (signedIn) {
         const currentUser = authInstance.currentUser.get();
         setUserEmail(currentUser.getBasicProfile().getEmail());
-        fetchGoogleEvents();
+        fetchGoogleEvents(currentDateRef.current);
       }
 
       authInstance.isSignedIn.listen((val) => {
@@ -80,7 +83,7 @@ export default function Calendar() {
         if (val) {
           const currentUser = authInstance.currentUser.get();
           setUserEmail(currentUser.getBasicProfile().getEmail());
-          fetchGoogleEvents();
+          fetchGoogleEvents(currentDateRef.current);
         } else {
           setUserEmail(null);
         }
@@ -88,7 +91,21 @@ export default function Calendar() {
     } catch (err) {
       console.error('Error initializing Google API Client', err);
     }
-  };
+  }, [fetchGoogleEvents]);
+
+  useEffect(() => {
+    let timeoutId;
+    const loadGapi = () => {
+      if (typeof gapi !== 'undefined') {
+        gapi.load('client:auth2', initGapiClient);
+      } else {
+        timeoutId = setTimeout(loadGapi, 300);
+      }
+    };
+    loadGapi();
+
+    return () => clearTimeout(timeoutId);
+  }, [initGapiClient]);
 
   const handleAuthClick = () => {
     if (!userEmail && !isSignedIn) {
@@ -96,7 +113,6 @@ export default function Calendar() {
       return;
     }
 
-    /* global gapi */
     if (typeof gapi !== 'undefined' && gapi.auth2) {
       const authInstance = gapi.auth2.getAuthInstance();
       if (isSignedIn) {
@@ -104,21 +120,6 @@ export default function Calendar() {
       } else {
         authInstance.signIn();
       }
-    }
-  };
-
-  const fetchGoogleEvents = async () => {
-    try {
-      const response = await gapi.client.calendar.events.list({
-        calendarId: 'primary',
-        timeMin: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString(),
-        timeMax: new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString(),
-        showDeleted: false,
-        singleEvents: true,
-      });
-      setEvents(response.result.items || []);
-    } catch (err) {
-      console.error('Error fetching events', err);
     }
   };
 
@@ -165,7 +166,7 @@ export default function Calendar() {
           calendarId: 'primary',
           resource: newEvent,
         });
-        fetchGoogleEvents();
+        fetchGoogleEvents(currentDate);
       } catch (err) {
         console.error('Error creating event on Google Calendar', err);
       }
@@ -186,11 +187,15 @@ export default function Calendar() {
   };
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const nextDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    setCurrentDate(nextDate);
+    if (isSignedIn) fetchGoogleEvents(nextDate);
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    const nextDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    setCurrentDate(nextDate);
+    if (isSignedIn) fetchGoogleEvents(nextDate);
   };
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();

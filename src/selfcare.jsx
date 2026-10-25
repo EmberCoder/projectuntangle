@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './selfcareapp.css';
 import { MagnifyingGlass, ArrowSquareOut } from 'phosphor-react';
 import NavBar from './components/NavBar/NavBar';
+import BackButton from './components/Login/BackButton';
+import ProfileButton from './components/ProfileButton.jsx';
+import { auth } from './firebase';
 
 export default function SelfCare() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
   const [zipCode, setZipCode] = useState('');
   const [activeZip, setActiveZip] = useState('');
   const [cityName, setCityName] = useState('Austin');
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return unsubscribe;
+  }, []);
 
   const hotlines = [
     { title: 'Suicide & Crisis Hotline', number: '988' },
@@ -22,19 +34,22 @@ export default function SelfCare() {
   const handleSearch = async (e) => {
     e.preventDefault();
     const cleanZip = zipCode.trim();
-    if (cleanZip.length < 5) return;
+    if (!/^\d{5}$/.test(cleanZip)) return;
 
     setLoading(true);
     setHasSearched(false);
 
     try {
-      // Fetch real city data for ANY US zip code across the entire country
-      const response = await fetch(`https://api.zippopotam.us/us/${cleanZip}`);
-      
+      const response = await fetch(
+        `https://api.zippopotam.us/us/${encodeURIComponent(cleanZip)}`
+      );
+
       if (response.ok) {
         const data = await response.json();
         if (data.places && data.places.length > 0) {
           setCityName(data.places[0]['place name']);
+        } else {
+          setCityName('Local Area');
         }
       } else {
         setCityName('Local Area');
@@ -42,11 +57,11 @@ export default function SelfCare() {
     } catch (err) {
       console.error('Error fetching zip data:', err);
       setCityName('Local Area');
+    } finally {
+      setActiveZip(cleanZip);
+      setLoading(false);
+      setHasSearched(true);
     }
-
-    setActiveZip(cleanZip);
-    setLoading(false);
-    setHasSearched(true);
   };
 
   return (
@@ -62,6 +77,7 @@ export default function SelfCare() {
         paddingRight: '1.5rem',
       }}
     >
+      {isLoggedIn ? <ProfileButton /> : <BackButton />}
       <h1 className="SelfCareHeader">Self Care Zone</h1>
       <p className="SelfCareSubheading">
         Find live meditation, breathing classes, yoga sessions, and mental health forums near you.
@@ -79,6 +95,10 @@ export default function SelfCare() {
             value={zipCode}
             onChange={(e) => setZipCode(e.target.value)}
             placeholder="e.g. 78681"
+            inputMode="numeric"
+            maxLength={5}
+            pattern="[0-9]{5}"
+            title="Enter a 5-digit US ZIP code"
             className="ZipInput"
           />
           <button type="submit" className="SearchButton" aria-label="Submit search">
