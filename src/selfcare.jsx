@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import './selfcareapp.css';
-import { MagnifyingGlass, ArrowSquareOut } from 'phosphor-react';
+import { ArrowSquareOut, MagnifyingGlass } from 'phosphor-react';
+import { useEffect, useState } from 'react';
 import NavBar from './components/NavBar/NavBar';
+import { auth } from './firebase';
+import './selfcareapp.css';
 
 export default function SelfCare() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
@@ -13,6 +14,7 @@ export default function SelfCare() {
 
     return () => unsubscribe();
   }, []);
+
   const [zipCode, setZipCode] = useState('');
   const [activeZip, setActiveZip] = useState('');
   const [cityName, setCityName] = useState('Austin');
@@ -28,7 +30,7 @@ export default function SelfCare() {
     { title: 'Crisis Support Services', number: '800-273-8255' },
   ];
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     const cleanZip = zipCode.trim();
     if (cleanZip.length < 5) return;
