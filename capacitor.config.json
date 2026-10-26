@@ -1,16 +1,5 @@
 {
-  "appId": "com.serenity.app",
-  "appName": "serenity",
-  "webDir": "dist",
-  "server": {
-    "cleartext": true,
-    "androidScheme": "https"
-  },
-  "plugins": {
-    "GoogleAuth": {
-      "scopes": ["profile", "email"],
-      "serverClientId": "YOUR_FIREBASE_WEB_CLIENT_ID.apps.googleusercontent.com",
-      "forceCodeForRefreshToken": true
-    }
-  }
+  "appId": "com.example.app",
+  "appName": "projectuntangle",
+  "webDir": "dist"
 }

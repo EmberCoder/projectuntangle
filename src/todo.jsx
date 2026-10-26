@@ -1,15 +1,9 @@
-import { Capacitor } from '@capacitor/core';
 import { useEffect, useState } from 'react';
 import BackButton from './components/Login/BackButton';
 import NavBar from './components/NavBar/NavBar';
 import ProfileButton from './components/ProfileButton';
 import { auth } from './firebase';
 import './todo.css';
-
-// Dynamically target backend port 5000 for Android emulator vs browser
-const API_BASE_URL = Capacitor.isNativePlatform()
-  ? 'http://10.0.2.2:5000'
-  : 'http://localhost:5000';
 
 function Todo() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
@@ -18,18 +12,21 @@ function Todo() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsLoggedIn(Boolean(user));
     });
+
     return () => unsubscribe();
   }, []);
-
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [taskDesc, setTaskDesc] = useState('');
   const [showForm, setShowForm] = useState(true);
+
   const [subTasks, setSubTasks] = useState([]);
+
   const [schedule, setSchedule] = useState(null);
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const [breakDownTasksLoading, setBreakDownTasksLoading] = useState(false);
+
   const [editingTaskId, setEditingTaskId] = useState(null);
 
   function addTask(taskText, taskDueDate, taskDescription) {
@@ -40,33 +37,52 @@ function Todo() {
       description: taskDescription,
       completed: false
     };
+
     setTasks([...tasks, newTask]);
+
     setTaskInput('');
     setDueDate('');
     setTaskDesc('');
     setShowForm(false);
+
     setSchedule(null);
   }
 
   function toggleTask(taskId) {
     setTasks(
       tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
+        task.id === taskId
+          ? {
+              ...task,
+              completed: !task.completed
+            }
+          : task
       )
     );
   }
 
   function deleteTask(taskId) {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-    setSubTasks(
-      subTasks.filter((result) => String(result.taskId) !== String(taskId))
+    setTasks(
+      tasks.filter((task) => task.id !== taskId)
     );
+
+    setSubTasks(
+      subTasks.filter(
+        (result) =>
+          String(result.taskId) !== String(taskId)
+      )
+    );
+
     setSchedule(null);
   }
 
   function editTask(taskId) {
-    const task = tasks.find((task) => task.id === taskId);
+    const task = tasks.find(
+      (task) => task.id === taskId
+    );
+
     if (!task) return;
+
     setEditingTaskId(taskId);
     setTaskInput(task.text);
     setDueDate(task.dueDate);
@@ -77,116 +93,223 @@ function Todo() {
     setTasks(
       tasks.map((task) =>
         task.id === taskId
-          ? { ...task, text: taskInput, dueDate: dueDate, description: taskDesc }
+          ? {
+              ...task,
+              text: taskInput,
+              dueDate: dueDate,
+              description: taskDesc
+            }
           : task
       )
     );
+
     setEditingTaskId(null);
+
     setTaskInput('');
     setDueDate('');
     setTaskDesc('');
+
     setSchedule(null);
   }
+
 
   async function breakDownTasks() {
     console.log('Break Down Tasks clicked!');
     console.log('Tasks being sent:', tasks);
+
     setBreakDownTasksLoading(true);
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/break-down`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tasks: tasks })
-      });
-      console.log('Response status:', response.status);
+      const response = await fetch(
+        '/api/break-down',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            tasks: tasks
+          })
+        }
+      );
+
+      console.log(
+        'Response status:',
+        response.status
+      );
+
       const data = await response.json();
-      console.log('Response data:', data);
+
+      console.log(
+        'Response data:',
+        data
+      );
 
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        throw new Error(
+          data.error ||
+            'Something went wrong'
+        );
       }
 
-      const formattedSubTasks = data.tasks.map((result) => ({
-        taskId: String(result.taskId),
-        subtasks: result.subtasks.map((subtask) => ({
-          text: subtask,
-          completed: false
-        }))
-      }));
+      const formattedSubTasks =
+        data.tasks.map((result) => ({
+          taskId: String(result.taskId),
 
-      console.log('Formatted subtasks:', formattedSubTasks);
+          subtasks: result.subtasks.map(
+            (subtask) => ({
+              text: subtask,
+              completed: false
+            })
+          )
+        }));
+
+      console.log(
+        'Formatted subtasks:',
+        formattedSubTasks
+      );
+
       setSubTasks(formattedSubTasks);
     } catch (error) {
-      console.error('Break down error:', error);
-    } finally {
-      setBreakDownTasksLoading(false);
+      console.error(
+        'Break down error:',
+        error
+      );
     }
   }
 
-  function toggleSubTask(taskId, subtaskIndex) {
+
+  function toggleSubTask(
+    taskId,
+    subtaskIndex
+  ) {
     setSubTasks(
       subTasks.map((result) => {
-        if (String(result.taskId) !== String(taskId)) {
+        if (
+          String(result.taskId) !==
+          String(taskId)
+        ) {
           return result;
         }
+
         return {
           ...result,
-          subtasks: result.subtasks.map((subtask, index) =>
-            index === subtaskIndex
-              ? { ...subtask, completed: !subtask.completed }
-              : subtask
-          )
+
+          subtasks:
+            result.subtasks.map(
+              (subtask, index) =>
+                index === subtaskIndex
+                  ? {
+                      ...subtask,
+                      completed:
+                        !subtask.completed
+                    }
+                  : subtask
+            )
         };
       })
     );
   }
 
+
   function addSubtasksToList(taskId) {
-    const result = subTasks.find((item) => String(item.taskId) === String(taskId));
-    const originalTask = tasks.find((task) => String(task.id) === String(taskId));
+    const result = subTasks.find(
+      (item) =>
+        String(item.taskId) ===
+        String(taskId)
+    );
+
+    const originalTask = tasks.find(
+      (task) =>
+        String(task.id) ===
+        String(taskId)
+    );
+
     if (!result || !originalTask) {
       return;
     }
 
-    const newTasks = result.subtasks.map((subtask, index) => ({
-      id: `${Date.now()}-${index}`,
-      text: subtask.text,
-      dueDate: originalTask.dueDate,
-      description: `Subtask of: ${originalTask.text}`,
-      completed: subtask.completed
-    }));
-
-    setTasks((currentTasks) => [...currentTasks, ...newTasks]);
-    setSubTasks((currentSubTasks) =>
-      currentSubTasks.filter((item) => String(item.taskId) !== String(taskId))
+    const newTasks = result.subtasks.map(
+      (subtask, index) => ({
+        id: `${Date.now()}-${index}`,
+        text: subtask.text,
+        dueDate: originalTask.dueDate,
+        description: `Subtask of: ${originalTask.text}`,
+        completed: subtask.completed
+      })
     );
+
+    setTasks((currentTasks) => [
+      ...currentTasks,
+      ...newTasks
+    ]);
+
+    setSubTasks((currentSubTasks) =>
+      currentSubTasks.filter(
+        (item) =>
+          String(item.taskId) !==
+          String(taskId)
+      )
+    );
+
     setSchedule(null);
   }
 
+
   async function createSchedule() {
-    console.log('Create Schedule clicked!');
-    console.log('Tasks being sent:', tasks);
+    console.log(
+      'Create Schedule clicked!'
+    );
+
+    console.log(
+      'Tasks being sent:',
+      tasks
+    );
+
     setScheduleLoading(true);
     setSchedule(null);
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/create-schedule`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tasks: tasks })
-      });
-      console.log('Schedule response status:', response.status);
-      const data = await response.json();
-      console.log('Schedule response:', data);
+      const response = await fetch(
+        '/api/create-schedule',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+          body: JSON.stringify({
+            tasks: tasks
+          })
+        }
+      );
+
+      console.log(
+        'Schedule response status:',
+        response.status
+      );
+
+      const data =
+        await response.json();
+
+      console.log(
+        'Schedule response:',
+        data
+      );
 
       if (!response.ok) {
         throw new Error(
-          data.error || 'Something went wrong while creating the schedule.'
+          data.error ||
+            'Something went wrong while creating the schedule.'
         );
       }
 
       setSchedule(data);
     } catch (error) {
-      console.error('Schedule error:', error);
+      console.error(
+        'Schedule error:',
+        error
+      );
     } finally {
       setScheduleLoading(false);
     }
@@ -201,28 +324,53 @@ function Todo() {
 
       {tasks.length === 0 ? (
         <div className="emptyState">
-          <p>You don't have any tasks yet!</p>
+          <p>
+            You don't have any tasks yet!
+          </p>
+
           <input
             type="text"
             placeholder="Enter a task"
             value={taskInput}
-            onChange={(event) => setTaskInput(event.target.value)}
+            onChange={(event) =>
+              setTaskInput(
+                event.target.value
+              )
+            }
           />
+          
+
           <input
             type="date"
             value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
+            onChange={(event) =>
+              setDueDate(
+                event.target.value
+              )
+            }
           />
+
           <input
             type="text"
             placeholder="Enter task details"
             value={taskDesc}
-            onChange={(event) => setTaskDesc(event.target.value)}
+            onChange={(event) =>
+              setTaskDesc(
+                event.target.value
+              )
+            }
           />
+
           <button
             onClick={() => {
-              if (taskInput.trim() !== '') {
-                addTask(taskInput, dueDate, taskDesc);
+              if (
+                taskInput.trim() !== ''
+              ) {
+                addTask(
+                  taskInput,
+                  dueDate,
+                  taskDesc
+                );
               }
             }}
           >
@@ -232,36 +380,63 @@ function Todo() {
       ) : (
         <div className="taskList">
           {tasks.map((task) => (
-            <div className="task" key={task.id}>
-              {editingTaskId === task.id ? (
+            <div
+              className="task"
+              key={task.id}
+            >
+              {editingTaskId ===
+              task.id ? (
                 <div className="editForm">
                   <input
                     type="text"
                     value={taskInput}
-                    onChange={(event) => setTaskInput(event.target.value)}
+                    onChange={(event) =>
+                      setTaskInput(
+                        event.target.value
+                      )
+                    }
                   />
+
                   <input
                     type="date"
                     value={dueDate}
-                    onChange={(event) => setDueDate(event.target.value)}
+                    onChange={(event) =>
+                      setDueDate(
+                        event.target.value
+                      )
+                    }
                   />
+
                   <input
                     type="text"
                     value={taskDesc}
-                    onChange={(event) => setTaskDesc(event.target.value)}
+                    onChange={(event) =>
+                      setTaskDesc(
+                        event.target.value
+                      )
+                    }
                   />
+
                   <button
                     onClick={() => {
-                      if (taskInput.trim() !== '') {
-                        updateTask(task.id);
+                      if (
+                        taskInput.trim() !==
+                        ''
+                      ) {
+                        updateTask(
+                          task.id
+                        );
                       }
                     }}
                   >
                     Save
                   </button>
+
                   <button
                     onClick={() => {
-                      setEditingTaskId(null);
+                      setEditingTaskId(
+                        null
+                      );
                       setTaskInput('');
                       setDueDate('');
                       setTaskDesc('');
@@ -272,64 +447,143 @@ function Todo() {
                 </div>
               ) : (
                 <>
+
                   <div className="taskCard">
                     <input
                       type="checkbox"
-                      checked={task.completed}
-                      onChange={() => toggleTask(task.id)}
+                      checked={
+                        task.completed
+                      }
+                      onChange={() =>
+                        toggleTask(
+                          task.id
+                        )
+                      }
                     />
+
                     <div
                       style={{
-                        textDecoration: task.completed ? 'line-through' : 'none'
+                        textDecoration:
+                          task.completed
+                            ? 'line-through'
+                            : 'none'
                       }}
                     >
-                      <div className="taskName">{task.text}</div>
+                      <div className="taskName">
+                        {task.text}
+                      </div>
+
                       {task.dueDate && (
-                        <div className="taskDueDate">Due: {task.dueDate}</div>
+                        <div className="taskDueDate">
+                          Due:{' '}
+                          {task.dueDate}
+                        </div>
                       )}
+
                       {task.description && (
                         <div className="taskDescription">
-                          {task.description}
+                          {
+                            task.description
+                          }
                         </div>
                       )}
                     </div>
                   </div>
 
+
                   <div className="taskActions">
-                    <button onClick={() => editTask(task.id)}>Edit</button>
-                    <button onClick={() => deleteTask(task.id)}>Delete</button>
+                    <button
+                      onClick={() =>
+                        editTask(
+                          task.id
+                        )
+                      }
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        deleteTask(
+                          task.id
+                        )
+                      }
+                    >
+                      Delete
+                    </button>
                   </div>
+
 
                   {subTasks
                     .filter(
-                      (result) => String(result.taskId) === String(task.id)
+                      (result) =>
+                        String(
+                          result.taskId
+                        ) ===
+                        String(task.id)
                     )
                     .map((result) => (
-                      <div className="subtasksResults" key={result.taskId}>
-                        <h3>Suggested Subtasks</h3>
+                      <div
+                        className="subtasksResults"
+                        key={
+                          result.taskId
+                        }
+                      >
+                        <h3>
+                          Suggested
+                          Subtasks
+                        </h3>
+
                         <div className="subtaskList">
-                          {result.subtasks.map((subtask, index) => (
-                            <div className="subtaskItem" key={index}>
-                              <input
-                                type="checkbox"
-                                checked={subtask.completed}
-                                onChange={() => toggleSubTask(task.id, index)}
-                              />
-                              <span
-                                style={{
-                                  textDecoration: subtask.completed
-                                    ? 'line-through'
-                                    : 'none'
-                                }}
+                          {result.subtasks.map(
+                            (
+                              subtask,
+                              index
+                            ) => (
+                              <div
+                                className="subtaskItem"
+                                key={
+                                  index
+                                }
                               >
-                                {subtask.text}
-                              </span>
-                            </div>
-                          ))}
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    subtask.completed
+                                  }
+                                  onChange={() =>
+                                    toggleSubTask(
+                                      task.id,
+                                      index
+                                    )
+                                  }
+                                />
+
+                                <span
+                                  style={{
+                                    textDecoration:
+                                      subtask.completed
+                                        ? 'line-through'
+                                        : 'none'
+                                  }}
+                                >
+                                  {
+                                    subtask.text
+                                  }
+                                </span>
+                              </div>
+                            )
+                          )}
                         </div>
+
+
                         <button
                           className="addSubtasksButton"
-                          onClick={() => addSubtasksToList(task.id)}
+                          onClick={() =>
+                            addSubtasksToList(
+                              task.id
+                            )
+                          }
                         >
                           Add Subtasks to My List
                         </button>
@@ -340,81 +594,154 @@ function Todo() {
             </div>
           ))}
 
-          {!showForm && editingTaskId === null && (
-            <button
-              className="addAnotherButton"
-              onClick={() => setShowForm(true)}
-            >
-              Add another task
-            </button>
-          )}
 
-          {showForm && editingTaskId === null && (
-            <div className="emptyState">
-              <input
-                type="text"
-                placeholder="Enter a task"
-                value={taskInput}
-                onChange={(event) => setTaskInput(event.target.value)}
-              />
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(event) => setDueDate(event.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Enter task details"
-                value={taskDesc}
-                onChange={(event) => setTaskDesc(event.target.value)}
-              />
+          {!showForm &&
+            editingTaskId ===
+              null && (
               <button
-                onClick={() => {
-                  if (taskInput.trim() !== '') {
-                    addTask(taskInput, dueDate, taskDesc);
-                  }
-                }}
+                className="addAnotherButton"
+                onClick={() =>
+                  setShowForm(true)
+                }
               >
-                Add a task
+                Add another task
               </button>
-            </div>
-          )}
+            )}
+
+
+          {showForm &&
+            editingTaskId ===
+              null && (
+              <div className="emptyState">
+                <input
+                  type="text"
+                  placeholder="Enter a task"
+                  value={taskInput}
+                  onChange={(event) =>
+                    setTaskInput(
+                      event.target.value
+                    )
+                  }
+                />
+
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(event) =>
+                    setDueDate(
+                      event.target.value
+                    )
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="Enter task details"
+                  value={taskDesc}
+                  onChange={(event) =>
+                    setTaskDesc(
+                      event.target.value
+                    )
+                  }
+                />
+
+                <button
+                  onClick={() => {
+                    if (
+                      taskInput.trim() !==
+                      ''
+                    ) {
+                      addTask(
+                        taskInput,
+                        dueDate,
+                        taskDesc
+                      );
+                    }
+                  }}
+                >
+                  Add a task
+                </button>
+              </div>
+            )}
         </div>
       )}
+
 
       {schedule && (
         <div className="scheduleResults">
-          <h2>Suggested Schedule</h2>
+          <h2>
+            Suggested Schedule
+          </h2>
+
           {schedule.schedule &&
-            schedule.schedule.map((item, index) => (
-              <div className="scheduleItem" key={index}>
-                <div className="scheduleNumber">{index + 1}</div>
-                <div>
-                  <h3>{item.task}</h3>
-                  {item.time && <p>{item.time}</p>}
-                  {item.reason && <p>{item.reason}</p>}
+            schedule.schedule.map(
+              (item, index) => (
+                <div
+                  className="scheduleItem"
+                  key={index}
+                >
+                  <div className="scheduleNumber">
+                    {index + 1}
+                  </div>
+
+                  <div>
+                    <h3>
+                      {item.task}
+                    </h3>
+
+                    {item.time && (
+                      <p>
+                        {item.time}
+                      </p>
+                    )}
+
+                    {item.reason && (
+                      <p>
+                        {item.reason}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
+
           {schedule.explanation && (
             <div className="scheduleExplanation">
-              <strong>Why this order?</strong>
-              <p>{schedule.explanation}</p>
+              <strong>
+                Why this order?
+              </strong>
+
+              <p>
+                {schedule.explanation}
+              </p>
             </div>
           )}
         </div>
       )}
 
+
       <div className="aiActions">
         <button
-          onClick={createSchedule}
-          disabled={tasks.length === 0 || scheduleLoading}
+          onClick={
+            createSchedule
+          }
+          disabled={
+            tasks.length === 0 ||
+            scheduleLoading
+          }
         >
-          {scheduleLoading ? 'Creating Schedule...' : 'Create Schedule'}
+          {scheduleLoading
+            ? 'Creating Schedule...'
+            : 'Create Schedule'}
         </button>
+
         <button
-          onClick={breakDownTasks}
-          disabled={tasks.length === 0 || breakDownTasksLoading}
+          onClick={
+            breakDownTasks
+          }
+          disabled={
+            tasks.length === 0
+          }
         >
           {breakDownTasksLoading
             ? 'Breaking Down Tasks...'

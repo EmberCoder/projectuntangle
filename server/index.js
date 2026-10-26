@@ -9,25 +9,13 @@ dotenv.config({ path: '.env.local' });
 const app = express();
 const PORT = 3001;
 
-// Allowed origin list for web dev, Codespaces, and native mobile apps
-const ALLOWED_ORIGINS = [
-  'https://ideal-couscous-vpgvgrj6qv442w4p-5173.app.github.dev',
-  'http://localhost:5173',
-  'http://localhost:3001',
-  'capacitor://localhost',
-  'http://localhost',
-];
+// Your frontend URL
+const FRONTEND_URL =
+  'https://ideal-couscous-vpgvgrj6qv442w4p-5173.app.github.dev';
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow mobile native bridges (no origin header) or listed origins
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Fallback to allow dev testing
-      }
-    },
+    origin: FRONTEND_URL,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
   })
@@ -96,7 +84,7 @@ Return ONLY valid JSON in this exact format:
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.6-flash',
           contents: prompt,
           config: {
             responseMimeType: 'application/json',
@@ -210,7 +198,7 @@ Make sure every original task appears exactly once in the schedule.
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.6-flash',
           contents: prompt,
           config: {
             responseMimeType: 'application/json',

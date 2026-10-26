@@ -1,4 +1,4 @@
-package com.serenity.app;
+package com.example.app;
 
 import com.getcapacitor.BridgeActivity;
 
