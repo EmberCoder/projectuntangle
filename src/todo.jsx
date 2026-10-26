@@ -5,6 +5,8 @@ import ProfileButton from './components/ProfileButton';
 import { auth } from './firebase';
 import './todo.css';
 
+const API_BASE_URL = 'https://ideal-couscous-vpgvgrj6qv442w4p-3001.app.github.dev';
+
 function Todo() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(auth.currentUser));
 
@@ -121,7 +123,7 @@ function Todo() {
 
     try {
       const response = await fetch(
-        '/api/break-down',
+        `${API_BASE_URL}/api/break-down`,
         {
           method: 'POST',
           headers: {
@@ -271,7 +273,7 @@ function Todo() {
 
     try {
       const response = await fetch(
-        '/api/create-schedule',
+        `${API_BASE_URL}/api/create-schedule`,
         {
           method: 'POST',
           headers: {
