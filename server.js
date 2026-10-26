@@ -1,58 +1,290 @@
+import { GoogleGenAI } from '@google/genai';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import 'dotenv/config';
 import express from 'express';
 
-dotenv.config();
+dotenv.config({ path: '.env.local' });
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-app.use(cors());
+// Allowed origins for web dev, local emulator bridge, and native apps
+const ALLOWED_ORIGINS = [
+  'https://ideal-couscous-vpgvgrj6qv442w4p-5173.app.github.dev',
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'http://10.0.2.2:5000',
+  'capacitor://localhost',
+  'http://localhost',
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+  })
+);
+
 app.use(express.json());
 
-app.get('/api/events', async (req, res) => {
-  const { zip } = req.query;
-  const apiKey = process.env.TICKETMASTER_API_KEY;
+// Request Logger - logs incoming requests in terminal
+app.use((req, res, next) => {
+  console.log(
+    `[${new Date().toLocaleTimeString()}] ${req.method} request to ${req.url}`
+  );
+  next();
+});
 
-  if (!apiKey) {
-    console.error('Missing TICKETMASTER_API_KEY in environment variables.');
-    return res.status(500).json({ error: 'Server configuration error: Missing API key' });
-  }
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
-  if (!zip) {
-    return res.status(400).json({ error: 'Zip code is required' });
-  }
+/*
+====================================================
+BREAK DOWN TASKS
+====================================================
+*/
 
+app.post('/api/break-down', async (req, res) => {
   try {
-    // 1. First, try searching Ticketmaster with a wellness/health keyword near the entered zip code (50-mile radius)
-    const tmUrl = `https://app.ticketmaster.com/discovery/v2/events.json?postalCode=${zip}&radius=50&unit=miles&keyword=wellness&apikey=${apiKey}`;
-    
-    let response = await fetch(tmUrl);
-    if (!response.ok) {
-      throw new Error(`Ticketmaster API returned status ${response.status}`);
+    const tasks = req.body.tasks;
+
+    console.log('Received tasks for break down:', tasks);
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(400).json({
+        error: 'No tasks were provided.',
+      });
     }
 
-    let data = await response.json();
-    
-    // 2. If the wellness keyword is too specific and returns 0 results for that zip, 
-    // fetch general live events in that area so your users still get real events and active ticket links.
-    if (!data._embedded || !data._embedded.events || data._embedded.events.length === 0) {
-      const generalTmUrl = `https://app.ticketmaster.com/discovery/v2/events.json?postalCode=${zip}&radius=50&unit=miles&apikey=${apiKey}`;
-      const generalResponse = await fetch(generalTmUrl);
-      
-      if (generalResponse.ok) {
-        data = await generalResponse.json();
+    const prompt = `
+You are a helpful productivity assistant.
+
+Break down each of the user's to-do list tasks into smaller,
+manageable subtasks.
+
+For each task:
+
+- Create 3 to 6 useful subtasks.
+- Make each subtask something the user could realistically complete.
+- Keep the subtasks specific and actionable.
+- Do not change the original task.
+- Do not add unnecessary subtasks.
+
+Here are the user's tasks:
+
+${JSON.stringify(tasks, null, 2)}
+
+Return ONLY valid JSON in this exact format:
+
+{
+  "tasks": [
+    {
+      "taskId": "original task id",
+      "subtasks": [
+        "subtask 1",
+        "subtask 2",
+        "subtask 3"
+      ]
+    }
+  ]
+}
+`;
+
+    let response;
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt,
+          config: {
+            responseMimeType: 'application/json',
+          },
+        });
+
+        break;
+      } catch (error) {
+        console.error(
+          `Gemini break-down attempt ${attempt} failed:`,
+          error
+        );
+
+        if (error.status === 503 && attempt < 3) {
+          console.log('Retrying Gemini...');
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, 5000)
+          );
+        } else {
+          throw error;
+        }
       }
     }
 
-    // Return the raw Ticketmaster JSON directly to selfcare.jsx
-    return res.json(data);
-  } catch (err) {
-    console.error('Ticketmaster API Fetch Error:', err);
-    return res.status(500).json({ error: 'Failed to fetch events from Ticketmaster' });
+    if (!response) {
+      throw new Error(
+        'Gemini did not return a response.'
+      );
+    }
+
+    const result = JSON.parse(response.text);
+
+    console.log('Gemini break-down result:', result);
+
+    res.json(result);
+  } catch (error) {
+    console.error(
+      'Break down error:',
+      error
+    );
+
+    res.status(500).json({
+      error:
+        'Something went wrong while breaking down the tasks.',
+    });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+/*
+====================================================
+CREATE SCHEDULE
+====================================================
+*/
+
+app.post('/api/create-schedule', async (req, res) => {
+  try {
+    const tasks = req.body.tasks;
+
+    console.log(
+      'Received tasks for schedule:',
+      tasks
+    );
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(400).json({
+        error: 'No tasks were provided.',
+      });
+    }
+
+    const prompt = `
+You are a helpful productivity assistant.
+
+The user has the following to-do list:
+
+${JSON.stringify(tasks, null, 2)}
+
+Create a reasonable order for completing these tasks.
+
+Consider:
+
+- Due dates, if provided.
+- Task importance.
+- Dependencies between tasks.
+- Tasks that should logically happen before other tasks.
+- Breaking larger tasks into a reasonable order.
+- Avoiding an unnecessarily complicated schedule.
+
+Do NOT change the user's original task names.
+
+Return ONLY valid JSON in exactly this format:
+
+{
+  "schedule": [
+    {
+      "task": "original task name",
+      "time": "Suggested time or timing",
+      "reason": "Short explanation for why this task belongs here"
+    }
+  ],
+  "explanation": "A short explanation of why this overall order makes sense."
+}
+
+Make sure every original task appears exactly once in the schedule.
+`;
+
+    console.log('Sending schedule request to Gemini...');
+
+    let response;
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt,
+          config: {
+            responseMimeType: 'application/json',
+          },
+        });
+
+        console.log(
+          'Gemini schedule response received.'
+        );
+
+        break;
+      } catch (error) {
+        console.error(
+          `Gemini schedule attempt ${attempt} failed:`,
+          error
+        );
+
+        if (error.status === 503 && attempt < 3) {
+          console.log(
+            'Gemini unavailable. Retrying...'
+          );
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, 5000)
+          );
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (!response) {
+      throw new Error(
+        'Gemini did not return a schedule response.'
+      );
+    }
+
+    const result = JSON.parse(response.text);
+
+    console.log(
+      'Gemini schedule result:',
+      result
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error(
+      'Create schedule error:',
+      error
+    );
+
+    res.status(500).json({
+      error:
+        'Something went wrong while creating the schedule.',
+    });
+  }
+});
+
+/*
+====================================================
+START SERVER
+====================================================
+*/
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(
+    `Server running on http://localhost:${PORT}`
+  );
 });
